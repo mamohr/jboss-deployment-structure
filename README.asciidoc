@@ -1,0 +1,25 @@
+== Overview
+
+This gradle plugin helps to generate a jboss-deployment-structure.xml based on the deploy configuration of the ear plugin.
+
+=== Usage
+
+To use the plugin, configure your `build.gradle` script and add the plugin:
+
+[source,groovy]
+----
+buildscript {
+    repositories {
+        maven(url 'http://dl.bintray.com/mamohr/maven/')
+    }
+    dependencies {
+        classpath 'com.github.mamohr.gradle:jboss-deployment-structure:0.5'
+    }
+}
+apply plugin: 'com.github.mamohr.jboss-deployment-structure'
+----
+
+In the ear project this plugin has to be *applied after the ear plugin*. It will then create a `jbossDeploymentStructure` extension.
+
+For ejb-jar or war project it will create a `jbossSubdeployment` extension.
+

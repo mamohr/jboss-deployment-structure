@@ -1,0 +1,64 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath "com.netflix.nebula:nebula-project-plugin:2.0.+"
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.0'
+    }
+}
+description='A gradle plugin that generates jboss-deployment-structure.xml based on the deploy configuration in the ear'
+group = 'com.github.mamohr.gradle'
+
+apply plugin: 'nebula-project'
+apply plugin: 'nebula-integtest'
+apply plugin: 'groovy'
+apply plugin: 'idea'
+apply plugin: 'com.jfrog.bintray'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile gradleApi()
+    compile localGroovy()
+    testCompile 'junit:junit:4.12'
+    testCompile 'com.netflix.nebula:nebula-test:2.0.+'
+}
+
+configurations.all {
+    resolutionStrategy {
+        exclude group: 'org.codehaus.groovy', module: 'groovy'
+        exclude group: 'org.codehaus.groovy', module: 'groovy-all'
+    }
+}
+
+
+bintray {
+    user = bintrayUser
+    key = bintrayKey
+    publications = ['mavenNebula']
+    publish = true
+    dryRun = false
+    pkg {
+        repo= 'maven'
+        desc = project.description
+        name = 'jboss-deployment-structure'
+        websiteUrl = "https://github.com/mamohr/${project.name}"
+        issueTrackerUrl = "https://github.com/mamohr/${project.name}/issues"
+        vcsUrl = "https://github.com/mamohr/${project.name}.git"
+        licenses = ['Apache-2.0']
+        labels = ['gradle', 'jboss', 'jboss-deployment-structure']
+        version {
+            attributes = ['gradle-plugin': 'com.github.mamohr.jboss-deployment-structure:com.github.mamohr.gradle:jboss-deployment-structure']
+        }
+    }
+}
+
+contacts {
+    'mario_mohr@web.de' {
+        github 'mamohr'
+    }
+}
+
