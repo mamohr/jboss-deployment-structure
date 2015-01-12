@@ -40,10 +40,13 @@ class DependencyModule extends Module {
     Node saveToXml(Node node) {
         Node module = super.saveToXml(node)
         if(export) {
-            module.attributes.export = export
+            module.attributes().export = export
         }
         if(optional) {
-            module.attributes.optional = optional
+            module.attributes().optional = optional
+        }
+        if(annotations) {
+            module.attributes().annotations = annotations
         }
         return module
     }
