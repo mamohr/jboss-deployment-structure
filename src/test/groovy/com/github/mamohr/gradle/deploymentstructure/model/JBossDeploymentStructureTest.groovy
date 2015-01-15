@@ -16,26 +16,35 @@
 
 package com.github.mamohr.gradle.deploymentstructure.model
 
-import org.custommonkey.xmlunit.Diff
+import com.github.mamohr.gradle.deploymentstructure.XmlTestHelper
 import org.custommonkey.xmlunit.XMLUnit
+import org.gradle.api.internal.AbstractNamedDomainObjectContainer
 import org.gradle.internal.reflect.DirectInstantiator
-import org.gradle.internal.reflect.Instantiator
 import spock.lang.Specification
+
+import static com.github.mamohr.gradle.deploymentstructure.XmlTestHelper.nodeIsSimilarToString
 
 /**
  * Created by mario on 12.01.2015.
  */
 class JBossDeploymentStructureTest extends Specification {
+    private JBossDeploymentStructure structure = new JBossDeploymentStructure(new AbstractNamedDomainObjectContainer<Subdeployment>(Subdeployment, new DirectInstantiator()) {
+        @Override
+        protected Subdeployment doCreate(String name) {
+            def subdeployment = new Subdeployment()
+            subdeployment.setName(name)
+            return subdeployment
+        }
+    })
 
-    def structure = new JBossDeploymentStructure(new DirectInstantiator())
 
     def setupSpec() {
         XMLUnit.setIgnoreWhitespace(true)
     }
 
     def 'empty deployment structure creates valid xml'() {
-        String expectedXml = '''
-            <jboss-deployment-structure xmlns="urn:jboss:deployment-structure:1.2">
+        String expectedXml =
+            '''<jboss-deployment-structure xmlns="urn:jboss:deployment-structure:1.2">
               <deployment>
                 <dependencies/>
                 <exclusions/>
@@ -44,12 +53,12 @@ class JBossDeploymentStructureTest extends Specification {
         when:
         Node xml = structure.saveToXml(null);
         then:
-        nodeIsSimilarToString(xml,expectedXml)
+        nodeIsSimilarToString(xml, expectedXml)
     }
 
     def 'dependecy module with export is created'() {
-        String expectedXml = '''
-            <jboss-deployment-structure xmlns="urn:jboss:deployment-structure:1.2">
+        String expectedXml =
+            '''<jboss-deployment-structure xmlns="urn:jboss:deployment-structure:1.2">
               <deployment>
                 <dependencies>
                     <module name="my-dependency" slot="1.1" export="true"/>
@@ -59,11 +68,11 @@ class JBossDeploymentStructureTest extends Specification {
             </jboss-deployment-structure>'''.stripIndent()
         when:
         structure.dependency('my-dependency:1.1') { dep ->
-             dep.export = true
+            dep.export = true
         }
         Node xml = structure.saveToXml(null);
         then:
-        nodeIsSimilarToString(xml,expectedXml)
+        nodeIsSimilarToString(xml, expectedXml)
     }
 
     def 'subdeployment is added'() {
@@ -82,7 +91,7 @@ class JBossDeploymentStructureTest extends Specification {
         structure.subdeployments.create("my-ejb.jar")
         Node xml = structure.saveToXml(null);
         then:
-        nodeIsSimilarToString(xml,expectedXml)
+        nodeIsSimilarToString(xml, expectedXml)
     }
 
     def 'ear subdeployment isolation tag is added if set to false'() {
@@ -98,15 +107,8 @@ class JBossDeploymentStructureTest extends Specification {
         structure.earSubdeploymentsIsolated = false
         Node xml = structure.saveToXml(null);
         then:
-        nodeIsSimilarToString(xml,expectedXml)
+        nodeIsSimilarToString(xml, expectedXml)
     }
 
-    def boolean nodeIsSimilarToString(Node node, String expectedString) {
-        StringWriter sw = new StringWriter()
-        new XmlNodePrinter(new PrintWriter(sw)).print(node)
-        String nodeString = sw.toString()
-        def diff = new Diff(expectedString,nodeString)
-        diff.similar()
-    }
 
 }

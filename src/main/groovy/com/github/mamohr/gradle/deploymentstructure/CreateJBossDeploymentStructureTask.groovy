@@ -21,6 +21,7 @@ import com.github.mamohr.gradle.deploymentstructure.model.Subdeployment
 import org.gradle.api.DefaultTask
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ProjectDependency
+import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import org.gradle.plugins.ear.Ear
@@ -39,8 +40,9 @@ class CreateJBossDeploymentStructureTask extends DefaultTask {
 
     Ear earTask
 
-    @Inject
-    CreateJBossDeploymentStructureTask() {
+    @InputFiles
+    def getDeployConfiguration() {
+        project.configurations.getByName(EarPlugin.DEPLOY_CONFIGURATION_NAME).files
     }
 
     @TaskAction
@@ -52,10 +54,11 @@ class CreateJBossDeploymentStructureTask extends DefaultTask {
         subdeployments.each{subdeployment->jbossDeploymentStructure.getSubdeployments().add(subdeployment)}
 
         deployConfiguration.getResolvedConfiguration().resolvedArtifacts.each {artifact ->
-            def subdeployment = new Subdeployment()
-            subdeployment.name = artifact.file.getName()
+            def subdeployment = new Subdeployment(artifact.file.getName())
             jbossDeploymentStructure.getSubdeployments().add(subdeployment)
         }
+
+        jbossDeploymentStructure.applySubdeploymentConfiguration();
 
         jbossDeploymentStructure.getGlobalExcludes().each { exclude ->
             jbossDeploymentStructure.deployment.getExcludeModules().add(exclude)

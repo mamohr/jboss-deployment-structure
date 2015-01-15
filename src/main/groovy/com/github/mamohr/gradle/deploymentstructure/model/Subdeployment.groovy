@@ -26,6 +26,14 @@ class Subdeployment extends Deployment implements Named, XmlSerializable{
 
     String name
 
+    public Subdeployment(String name) {
+        this.name = name
+    }
+
+    public Subdeployment() {
+
+    }
+
     @Override
     def saveToXml(Node node) {
         Node subdeployment =  super.saveToXml(node)

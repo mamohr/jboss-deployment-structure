@@ -14,29 +14,19 @@
  * limitations under the License.
  */
 
-package com.github.mamohr.gradle.deploymentstructure.model
+package com.github.mamohr.gradle.deploymentstructure
+
+import org.custommonkey.xmlunit.Diff
 
 /**
- * Created by mario on 10.01.2015.
+ * Created by mario on 15.01.2015.
  */
-class Module implements XmlSerializable {
-    String name;
-    String slot = 'main';
-
-    Module(String name) {
-        def moduleParts = name.split(':')
-        if(moduleParts.length == 2) {
-            slot=moduleParts[1]
-        }
-        this.name = moduleParts[0]
-    }
-
-    @Override
-    Node saveToXml(Node root) {
-        Node module = new Node(null, "module", [name:name, slot: slot])
-        if(root != null)
-            root.append(module)
-        return module;
+class XmlTestHelper {
+    def static boolean nodeIsSimilarToString(Node node, String expectedString) {
+        StringWriter sw = new StringWriter()
+        new XmlNodePrinter(new PrintWriter(sw)).print(node)
+        String nodeString = sw.toString()
+        def diff = new Diff(expectedString, nodeString)
+        diff.similar()
     }
 }
-

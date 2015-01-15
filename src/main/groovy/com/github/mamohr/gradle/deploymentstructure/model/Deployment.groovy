@@ -16,21 +16,28 @@
 
 package com.github.mamohr.gradle.deploymentstructure.model
 
+import org.gradle.api.Action
 import org.gradle.util.ConfigureUtil
 
+
 /**
- * Created by mario on 10.01.2015.
+ * This class represents a deployment in the jboss-deployment-structure.xml
  */
 class Deployment {
     private Set<DependencyModule> dependencyModules = []
     private Set<Module> excludeModules = [] as Set
 
+    /**
+     * Adds a dependency module to the deployment.
+     *
+     * @param moduleIdentifier A module identifier in the form 'module.name:slot'. If no slot is given 'main' is assumed.
+     */
     void dependency(String moduleIdentifier) {
         DependencyModule dependencyModule = new DependencyModule(moduleIdentifier)
         dependencyModules.add(dependencyModule)
     }
 
-    void dependency(String moduleIdentifier, Closure closure) {
+    void dependency(String moduleIdentifier, Closure<DependencyModule> closure) {
         DependencyModule dependencyModule = new DependencyModule(moduleIdentifier)
         dependencyModules.add(dependencyModule)
         ConfigureUtil.configure(closure, dependencyModule)

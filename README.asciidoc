@@ -21,6 +21,7 @@ apply plugin: 'com.github.mamohr.jboss-deployment-structure'
 
 In the ear project this plugin has to be *applied after the ear plugin*. It will then create a `jbossDeploymentStructure` extension.
 
+[source,groovy]
 ----
 jbossDeploymentStructure {
     structureVersion ='1.2' //JBoss deployment structure schema version
@@ -34,7 +35,7 @@ jbossDeploymentStructure {
         optional = true
         annotations = true
     }
-    subdeployments { // Configure addional subdeployments
+    subdeployments { // Configure additional subdeployments
         'my-war.war' {
             dependency 'another.module'
             exclude 'excluded.module'
@@ -44,5 +45,21 @@ jbossDeploymentStructure {
 }
 ----
 
-For ejb-jar or war projects the plugin will create a `jbossSubdeployment` extension.
+For ejb-jar or war projects the plugin creates a `jbossSubdeployment` extension. It can contain dependencies and excludes as in the following example:
 
+[source,groovy]
+----
+jbossSubdeployment {
+    dependency 'my-other-dependency' {
+            slot = '1.1'
+            export = true
+            optional = true
+            annotations = true
+    }
+    exclude 'excluded.module'
+}
+----
+
+All dependencies in the deploy configuration of the ear will be automatically added to the jboss-deployment-structure.xml with the configured global excludes.
+
+For more examples have a look at the integration tests.

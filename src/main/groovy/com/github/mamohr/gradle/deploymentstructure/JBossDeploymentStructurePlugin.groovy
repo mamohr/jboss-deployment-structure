@@ -42,8 +42,9 @@ class JBossDeploymentStructurePlugin implements Plugin<Project> {
 
     void apply(Project target) {
         if(target.plugins.hasPlugin(EarPlugin)) {
-            jBossDeploymentStructureExtension = target.extensions.create(JBossDeploymentStructure.EXTENSION_NAME, JBossDeploymentStructure, instantiator)
-            target.tasks.withType(Ear) { earTask->
+            target.container(Subdeployment)
+            jBossDeploymentStructureExtension = target.extensions.create(JBossDeploymentStructure.EXTENSION_NAME, JBossDeploymentStructure, target.container(Subdeployment))
+            target.tasks.withType(Ear) { earTask ->
                 def deploymentStructureTask = target.tasks.create(CreateJBossDeploymentStructureTask.TASK_NAME, CreateJBossDeploymentStructureTask);
                 deploymentStructureTask.earTask = earTask
                 earTask.getMetaInf().from(deploymentStructureTask.outputs)

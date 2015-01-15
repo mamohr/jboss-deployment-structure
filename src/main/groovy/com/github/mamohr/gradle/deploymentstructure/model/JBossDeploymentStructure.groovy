@@ -20,6 +20,8 @@ import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.internal.AbstractNamedDomainObjectContainer
 import org.gradle.internal.reflect.Instantiator
+import org.gradle.mvn3.org.sonatype.aether.util.ConfigUtils
+import org.gradle.util.ConfigureUtil
 
 class JBossDeploymentStructure implements XmlSerializable {
 
@@ -27,24 +29,16 @@ class JBossDeploymentStructure implements XmlSerializable {
 
     private globalExcludes = [] as Set
     private Deployment deployment = new Deployment()
-    private NamedDomainObjectContainer<Subdeployment> subdeployments
-    private Instantiator instantiator
+    private final NamedDomainObjectContainer<Subdeployment> subdeployments
+    private List<Action<NamedDomainObjectContainer<Subdeployment>>> subdeploymentActions = new ArrayList<>();
 
     boolean earSubdeploymentsIsolated = true
     String structureVersion = '1.2'
 
     private List<Action<? super Node>> xmlActions = []
 
-    JBossDeploymentStructure(Instantiator instantiator) {
-        this.instantiator = instantiator
-        subdeployments = new AbstractNamedDomainObjectContainer<Subdeployment>(Subdeployment,instantiator) {
-            @Override
-            protected Subdeployment doCreate(String name) {
-                def subdeployment = new Subdeployment()
-                subdeployment.setName(name)
-                return subdeployment
-            }
-        }
+    JBossDeploymentStructure(NamedDomainObjectContainer subdeployments) {
+        this.subdeployments = subdeployments;
     }
 
     void globalExclude(String moduleIdentifier) {
@@ -68,15 +62,15 @@ class JBossDeploymentStructure implements XmlSerializable {
         return subdeployments
     }
 
-    void subdeployments(Action<? super NamedDomainObjectContainer<Subdeployment>> configure) {
-        configure.execute(subdeployments)
+    void subdeployments(Action<NamedDomainObjectContainer<Subdeployment>> configure) {
+        subdeploymentActions.add(configure);
     }
 
     protected Deployment getDeployment() {
         return deployment;
     }
 
-    protected Set<Module> getGlobalExcludes() {
+    Set<Module> getGlobalExcludes() {
         return globalExcludes
     }
 
@@ -100,5 +94,9 @@ class JBossDeploymentStructure implements XmlSerializable {
             xmlAction.execute(root)
         }
         root;
+    }
+
+    def applySubdeploymentConfiguration() {
+        subdeploymentActions.each {action -> action.execute(subdeployments)}
     }
 }

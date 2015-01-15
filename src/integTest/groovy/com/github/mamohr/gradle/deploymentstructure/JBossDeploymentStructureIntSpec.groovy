@@ -18,6 +18,8 @@ package com.github.mamohr.gradle.deploymentstructure
 
 import nebula.test.IntegrationSpec
 import nebula.test.functional.ExecutionResult
+import org.gradle.api.ProjectConfigurationException
+import org.gradle.api.tasks.StopExecutionException
 
 import javax.xml.XMLConstants
 import javax.xml.transform.stream.StreamSource
@@ -67,7 +69,6 @@ class JBossDeploymentStructureIntSpec extends IntegrationSpec {
     }
 
     def 'withXml can be used to change xml'() {
-        useToolingApi = false
         buildFile << '''
             apply plugin: 'ear'
             apply plugin: 'com.github.mamohr.jboss-deployment-structure'
@@ -97,7 +98,7 @@ class JBossDeploymentStructureIntSpec extends IntegrationSpec {
     }
 
     def 'project deploy dependency creates subdeployment'() {
-        helper.addSubproject('module')
+        helper.addSubproject("module")
         buildFile << '''
             apply plugin: 'ear'
             apply plugin: 'com.github.mamohr.jboss-deployment-structure'
@@ -153,6 +154,59 @@ class JBossDeploymentStructureIntSpec extends IntegrationSpec {
         node.'sub-deployment'.exclusions.module.@name.get(0) == 'javax.faces.api'
         node.'deployment'.exclusions.module.@name.get(0) == 'javax.faces.api'
         result.failure == null
+    }
+
+
+    def 'Subdeployment in subproject is merged to subdeployment in ear'() {
+        String subprojectGradle = '''
+        apply plugin: 'java'
+        apply plugin: 'com.github.mamohr.jboss-deployment-structure'
+
+        jbossSubdeployment {
+            exclude 'not_needed:1.2'
+        }
+        '''
+
+        helper.addSubproject('module', subprojectGradle)
+        buildFile << '''
+        apply plugin: 'ear'
+            apply plugin: 'com.github.mamohr.jboss-deployment-structure\'
+
+            dependencies {
+                deploy project(':module')
+            }
+
+            jbossDeploymentStructure {
+                subdeployments {
+                    'module.jar' {
+                        exclude 'second_unneeded_module'
+                    }
+                }
+            }
+
+            subprojects {
+                apply plugin: 'java'
+            }
+        '''
+        when:
+        runTasks('ear')
+        then:
+        fileIsValidForSchema(file('build/createJBossDeploymentStructure/jboss-deployment-structure.xml'))
+        XmlParser parser = new XmlParser()
+        def node = parser.parse(file('build/createJBossDeploymentStructure/jboss-deployment-structure.xml'))
+        node.'sub-deployment'.size() == 1
+        node.'sub-deployment'.exclusions.module.size() == 2
+
+    }
+
+    def 'applying to project without jar, war or ear tasks throws exception'() {
+        buildFile << '''
+            apply plugin: 'com.github.mamohr.jboss-deployment-structure'
+        '''
+        when:
+        ExecutionResult result = runTasks(CreateJBossDeploymentStructureTask.TASK_NAME)
+        then:
+        result.failure != null
     }
 
     boolean fileIsValidForSchema(File file) {
