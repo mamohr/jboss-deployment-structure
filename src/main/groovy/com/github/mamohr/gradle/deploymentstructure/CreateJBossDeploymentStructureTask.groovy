@@ -21,7 +21,6 @@ import com.github.mamohr.gradle.deploymentstructure.model.Subdeployment
 import org.gradle.api.DefaultTask
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ProjectDependency
-import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import org.gradle.plugins.ear.Ear
@@ -41,7 +40,10 @@ class CreateJBossDeploymentStructureTask extends DefaultTask {
         earTask.getMetaInf().from(this.outputs)
     }
 
-    @InputFiles
+    CreateJBossDeploymentStructureTask() {
+        outputs.upToDateWhen { false }
+    }
+
     Set<File> getDeployConfigurationFiles() {
         getDeployConfiguration().files
     }
