@@ -39,9 +39,9 @@ class JBossDeploymentStructurePlugin implements Plugin<Project> {
             def createTask = target.tasks.create(CreateJBossDeploymentStructureTask.TASK_NAME, CreateJBossDeploymentStructureTask)
             createTask.wireTo((Ear) target.tasks.findByName(EarPlugin.EAR_TASK_NAME))
         }
-        if (!target.plugins.hasPlugin(EarPlugin)) {
-            Subdeployment subdeployment = target.extensions.create(Subdeployment.EXTENSION_NAME, Subdeployment)
-            target.afterEvaluate {
+        Subdeployment subdeployment = target.extensions.create(Subdeployment.EXTENSION_NAME, Subdeployment)
+        target.afterEvaluate {
+            if (!target.plugins.hasPlugin(EarPlugin)) {
                 if (!subdeployment.name) {
                     Jar task = (War) target.tasks.findByName(WarPlugin.WAR_TASK_NAME)
                     if (!task) {

@@ -19,7 +19,7 @@ buildscript {
 apply plugin: 'com.github.mamohr.jboss-deployment-structure'
 ----
 
-In the ear project this plugin has to be *applied after the ear plugin*. It will then create a `jbossDeploymentStructure` extension.
+When applied to an ear project, it will create a `jbossDeploymentStructure` extension.
 
 [source,groovy]
 ----
@@ -34,6 +34,8 @@ jbossDeploymentStructure {
         export = true
         optional = true
         annotations = true
+        services = 'NONE' //possible values [NONE, IMPORT, EXPORT]
+        metaInf = 'IMPORT' //possible values [NONE, IMPORT, EXPORT]
     }
     subdeployments { // Configure additional subdeployments
         'my-war.war' {

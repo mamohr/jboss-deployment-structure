@@ -18,12 +18,16 @@ package com.github.mamohr.gradle.deploymentstructure
 
 import nebula.test.IntegrationSpec
 import nebula.test.functional.ExecutionResult
+import spock.lang.Shared
 
 import javax.xml.XMLConstants
 import javax.xml.transform.stream.StreamSource
 import javax.xml.validation.SchemaFactory
 
 class JBossDeploymentStructureIntSpec extends IntegrationSpec {
+    @Shared
+    private XmlParser parser = new XmlParser()
+
     def 'applying the plugin creates jboss-deployment-structure.xml'() {
         buildFile << '''
             apply plugin: 'ear'
@@ -40,7 +44,7 @@ class JBossDeploymentStructureIntSpec extends IntegrationSpec {
         result.failure == null
     }
 
-    def 'jbossDeploymentStructure extension configuraion is saved to xml'() {
+    def 'jbossDeploymentStructure extension configuration is saved to xml'() {
 
         buildFile << '''
             apply plugin: 'ear'
@@ -89,7 +93,6 @@ class JBossDeploymentStructureIntSpec extends IntegrationSpec {
         then:
         result.wasExecuted("createJBossDeploymentStructure")
         fileIsValidForSchema(file('build/createJBossDeploymentStructure/jboss-deployment-structure.xml'))
-        XmlParser parser = new XmlParser()
         def node = parser.parse(file('build/createJBossDeploymentStructure/jboss-deployment-structure.xml'))
         node.children().isEmpty()
         result.failure == null
@@ -116,7 +119,6 @@ class JBossDeploymentStructureIntSpec extends IntegrationSpec {
         then:
         result.wasExecuted("createJBossDeploymentStructure")
         fileIsValidForSchema(file('build/createJBossDeploymentStructure/jboss-deployment-structure.xml'))
-        XmlParser parser = new XmlParser()
         def node = parser.parse(file('build/createJBossDeploymentStructure/jboss-deployment-structure.xml'))
         ((NodeList) node.get('sub-deployment')).size() == 1
         result.failure == null
@@ -147,7 +149,6 @@ class JBossDeploymentStructureIntSpec extends IntegrationSpec {
         then:
         result.wasExecuted("createJBossDeploymentStructure")
         fileIsValidForSchema(file('build/createJBossDeploymentStructure/jboss-deployment-structure.xml'))
-        XmlParser parser = new XmlParser()
         def node = parser.parse(file('build/createJBossDeploymentStructure/jboss-deployment-structure.xml'))
         node.'sub-deployment'.exclusions.module.@name.get(0) == 'javax.faces.api'
         node.'deployment'.exclusions.module.@name.get(0) == 'javax.faces.api'
@@ -190,8 +191,7 @@ class JBossDeploymentStructureIntSpec extends IntegrationSpec {
         runTasks('ear')
         then:
         fileIsValidForSchema(file('build/createJBossDeploymentStructure/jboss-deployment-structure.xml'))
-        XmlParser parser = new XmlParser()
-        def node = parser.parse(file('build/createJBossDeploymentStructure/jboss-deployment-structure.xml'))
+        def node = this.parser.parse(file('build/createJBossDeploymentStructure/jboss-deployment-structure.xml'))
         node.'sub-deployment'.size() == 1
         node.'sub-deployment'.exclusions.module.size() == 2
 
@@ -205,6 +205,47 @@ class JBossDeploymentStructureIntSpec extends IntegrationSpec {
         ExecutionResult result = runTasks(CreateJBossDeploymentStructureTask.TASK_NAME)
         then:
         result.failure != null
+    }
+
+    def 'applying to project before ear task is working'() {
+        buildFile << '''
+            apply plugin: 'com.github.mamohr.jboss-deployment-structure'
+            apply plugin: 'ear'
+
+            jbossDeploymentStructure {
+                dependency 'my-module:1.3'
+            }
+        '''
+        when:
+        ExecutionResult result = runTasks(CreateJBossDeploymentStructureTask.TASK_NAME)
+        then:
+        fileIsValidForSchema(file('build/createJBossDeploymentStructure/jboss-deployment-structure.xml'))
+        result.failure == null
+    }
+
+    def 'applying module with services and meta-inf attribute is working'() {
+        buildFile << '''
+            apply plugin: 'com.github.mamohr.jboss-deployment-structure'
+            apply plugin: 'ear'
+
+            jbossDeploymentStructure {
+                dependency ('my-module:1.3') {
+                    services = 'NONE'
+                    metaInf = 'IMPORT'
+                }
+            }
+        '''
+        when:
+        ExecutionResult result = runTasks(CreateJBossDeploymentStructureTask.TASK_NAME)
+
+        then:
+        result.failure == null
+        fileIsValidForSchema(file('build/createJBossDeploymentStructure/jboss-deployment-structure.xml'))
+        def node = parser.parse(file('build/createJBossDeploymentStructure/jboss-deployment-structure.xml'))
+        def module = node.'deployment'.dependencies.module.get(0)
+        module.@services == 'none'
+        module.'@meta-inf' == 'import'
+        result.failure == null
     }
 
     boolean fileIsValidForSchema(File file) {
