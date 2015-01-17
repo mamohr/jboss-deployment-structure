@@ -39,13 +39,13 @@ class DependencyModule extends Module {
     @Override
     Node saveToXml(Node node) {
         Node module = super.saveToXml(node)
-        if(export) {
+        if (export) {
             module.attributes().export = export
         }
-        if(optional) {
+        if (optional) {
             module.attributes().optional = optional
         }
-        if(annotations) {
+        if (annotations) {
             module.attributes().annotations = annotations
         }
         return module

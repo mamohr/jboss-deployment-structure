@@ -21,7 +21,7 @@ import org.gradle.api.Named
 /**
  * Created by mario on 10.01.2015.
  */
-class Subdeployment extends Deployment implements Named, XmlSerializable{
+class Subdeployment extends Deployment implements Named, XmlSerializable {
     static String EXTENSION_NAME = 'jbossSubdeployment'
 
     String name
@@ -36,7 +36,7 @@ class Subdeployment extends Deployment implements Named, XmlSerializable{
 
     @Override
     def saveToXml(Node node) {
-        Node subdeployment =  super.saveToXml(node)
+        Node subdeployment = super.saveToXml(node)
         subdeployment.attributes().name = name
         return subdeployment
     }

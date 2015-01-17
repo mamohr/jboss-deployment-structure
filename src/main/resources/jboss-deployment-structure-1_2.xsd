@@ -750,7 +750,7 @@
             </documentation>
         </annotation>
         <xsd:sequence>
-            <ex:element name="subsystem" type="subsystemType"  minOccurs="0" maxOccurs="unbounded" />
+            <ex:element name="subsystem" type="subsystemType" minOccurs="0" maxOccurs="unbounded"/>
         </xsd:sequence>
     </xsd:complexType>
 

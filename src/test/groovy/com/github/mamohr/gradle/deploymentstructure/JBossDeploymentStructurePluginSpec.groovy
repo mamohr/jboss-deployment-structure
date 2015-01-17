@@ -16,8 +16,8 @@
 
 package com.github.mamohr.gradle.deploymentstructure
 
-import nebula.test.PluginProjectSpec
 import com.github.mamohr.gradle.deploymentstructure.model.JBossDeploymentStructure
+import nebula.test.PluginProjectSpec
 import org.gradle.plugins.ear.EarPlugin
 
 /**

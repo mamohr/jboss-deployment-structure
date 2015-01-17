@@ -44,7 +44,7 @@ class DependencyModuleTest extends Specification {
         String expectedXml =
                 '<module name="my-dependency" slot="main" optional="true"/>'.stripIndent()
         when:
-        dependencyModule.optional=true
+        dependencyModule.optional = true
         Node xml = dependencyModule.saveToXml(null);
         then:
         nodeIsSimilarToString(xml, expectedXml)
@@ -54,7 +54,7 @@ class DependencyModuleTest extends Specification {
         String expectedXml =
                 '<module name="my-dependency" slot="main" export="true"/>'.stripIndent()
         when:
-        dependencyModule.export=true
+        dependencyModule.export = true
         Node xml = dependencyModule.saveToXml(null);
         then:
         nodeIsSimilarToString(xml, expectedXml)
@@ -64,7 +64,7 @@ class DependencyModuleTest extends Specification {
         String expectedXml =
                 '<module name="my-dependency" slot="main" annotations="true"/>'.stripIndent()
         when:
-        dependencyModule.annotations=true
+        dependencyModule.annotations = true
         Node xml = dependencyModule.saveToXml(null);
         then:
         nodeIsSimilarToString(xml, expectedXml)

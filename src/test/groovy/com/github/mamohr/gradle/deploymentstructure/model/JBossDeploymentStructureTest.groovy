@@ -16,7 +16,6 @@
 
 package com.github.mamohr.gradle.deploymentstructure.model
 
-import com.github.mamohr.gradle.deploymentstructure.XmlTestHelper
 import org.custommonkey.xmlunit.XMLUnit
 import org.gradle.api.internal.AbstractNamedDomainObjectContainer
 import org.gradle.internal.reflect.DirectInstantiator
@@ -28,7 +27,8 @@ import static com.github.mamohr.gradle.deploymentstructure.XmlTestHelper.nodeIsS
  * Created by mario on 12.01.2015.
  */
 class JBossDeploymentStructureTest extends Specification {
-    private JBossDeploymentStructure structure = new JBossDeploymentStructure(new AbstractNamedDomainObjectContainer<Subdeployment>(Subdeployment, new DirectInstantiator()) {
+    private JBossDeploymentStructure structure = new JBossDeploymentStructure(new AbstractNamedDomainObjectContainer<Subdeployment>
+    (Subdeployment, new DirectInstantiator()) {
         @Override
         protected Subdeployment doCreate(String name) {
             def subdeployment = new Subdeployment()
@@ -44,7 +44,7 @@ class JBossDeploymentStructureTest extends Specification {
 
     def 'empty deployment structure creates valid xml'() {
         String expectedXml =
-            '''<jboss-deployment-structure xmlns="urn:jboss:deployment-structure:1.2">
+                '''<jboss-deployment-structure xmlns="urn:jboss:deployment-structure:1.2">
               <deployment>
                 <dependencies/>
                 <exclusions/>
@@ -58,7 +58,7 @@ class JBossDeploymentStructureTest extends Specification {
 
     def 'dependecy module with export is created'() {
         String expectedXml =
-            '''<jboss-deployment-structure xmlns="urn:jboss:deployment-structure:1.2">
+                '''<jboss-deployment-structure xmlns="urn:jboss:deployment-structure:1.2">
               <deployment>
                 <dependencies>
                     <module name="my-dependency" slot="1.1" export="true"/>

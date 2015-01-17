@@ -18,8 +18,6 @@ package com.github.mamohr.gradle.deploymentstructure
 
 import nebula.test.IntegrationSpec
 import nebula.test.functional.ExecutionResult
-import org.gradle.api.ProjectConfigurationException
-import org.gradle.api.tasks.StopExecutionException
 
 import javax.xml.XMLConstants
 import javax.xml.transform.stream.StreamSource

@@ -57,7 +57,7 @@ class Deployment {
             module.saveToXml(dependencies);
         }
         Node exclusions = new Node(deployment, "exclusions")
-        excludeModules.each {ex -> ex.saveToXml(exclusions)}
+        excludeModules.each { ex -> ex.saveToXml(exclusions) }
         return deployment
     }
 

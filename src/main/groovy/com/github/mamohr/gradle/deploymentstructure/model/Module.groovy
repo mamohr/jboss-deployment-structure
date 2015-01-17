@@ -25,16 +25,16 @@ class Module implements XmlSerializable {
 
     Module(String name) {
         def moduleParts = name.split(':')
-        if(moduleParts.length == 2) {
-            slot=moduleParts[1]
+        if (moduleParts.length == 2) {
+            slot = moduleParts[1]
         }
         this.name = moduleParts[0]
     }
 
     @Override
     Node saveToXml(Node root) {
-        Node module = new Node(null, "module", [name:name, slot: slot])
-        if(root != null)
+        Node module = new Node(null, "module", [name: name, slot: slot])
+        if (root != null)
             root.append(module)
         return module;
     }
