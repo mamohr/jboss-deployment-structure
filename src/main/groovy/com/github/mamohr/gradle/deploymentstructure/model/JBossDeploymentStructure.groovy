@@ -18,24 +18,20 @@ package com.github.mamohr.gradle.deploymentstructure.model
 
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
-import org.gradle.api.internal.AbstractNamedDomainObjectContainer
-import org.gradle.internal.reflect.Instantiator
-import org.gradle.mvn3.org.sonatype.aether.util.ConfigUtils
-import org.gradle.util.ConfigureUtil
 
 class JBossDeploymentStructure implements XmlSerializable {
 
     public static final String EXTENSION_NAME = "jbossDeploymentStructure"
 
-    private globalExcludes = [] as Set
+    private Set<Module> globalExcludes = []
     private Deployment deployment = new Deployment()
     private final NamedDomainObjectContainer<Subdeployment> subdeployments
     private List<Action<NamedDomainObjectContainer<Subdeployment>>> subdeploymentActions = new ArrayList<>();
+    private List<Action<? super Node>> xmlActions = []
 
     boolean earSubdeploymentsIsolated = true
     String structureVersion = '1.2'
 
-    private List<Action<? super Node>> xmlActions = []
 
     JBossDeploymentStructure(NamedDomainObjectContainer subdeployments) {
         this.subdeployments = subdeployments;
@@ -47,31 +43,24 @@ class JBossDeploymentStructure implements XmlSerializable {
     }
 
     void dependency(String moduleIdentifier) {
-       deployment.dependency(moduleIdentifier)
+        deployment.dependency(moduleIdentifier)
     }
 
     void dependency(String moduleIdentifier, Closure closure) {
-       deployment.dependency(moduleIdentifier,closure)
+        deployment.dependency(moduleIdentifier, closure)
     }
 
     void exclude(String moduleIdentifier) {
         deployment.exclude(moduleIdentifier)
     }
 
-    NamedDomainObjectContainer<Subdeployment> getSubdeployments() {
-        return subdeployments
+
+    void addSubdeployments(Collection<? extends Subdeployment> subdeployments) {
+        this.subdeployments.addAll(subdeployments)
     }
 
     void subdeployments(Action<NamedDomainObjectContainer<Subdeployment>> configure) {
         subdeploymentActions.add(configure);
-    }
-
-    protected Deployment getDeployment() {
-        return deployment;
-    }
-
-    Set<Module> getGlobalExcludes() {
-        return globalExcludes
     }
 
     void withXml(Action<? super Node> rootNodeAction) {
@@ -80,14 +69,16 @@ class JBossDeploymentStructure implements XmlSerializable {
 
     @Override
     Node saveToXml(Node root) {
-        if(!root) {
+        if (!root) {
             root = new Node(null, "jboss-deployment-structure", [xmlns: "urn:jboss:deployment-structure:$structureVersion"])
         }
-        if(!earSubdeploymentsIsolated) {
+        applyGlobalExcludes();
+        applySubdeploymentConfiguration()
+        if (!earSubdeploymentsIsolated) {
             root.appendNode("ear-subdeployments-isolated", earSubdeploymentsIsolated)
         }
         deployment.saveToXml(root);
-        getSubdeployments().each { subdeployment ->
+        subdeployments.each { subdeployment ->
             subdeployment.saveToXml(root)
         }
         xmlActions.each { xmlAction ->
@@ -96,7 +87,27 @@ class JBossDeploymentStructure implements XmlSerializable {
         root;
     }
 
-    def applySubdeploymentConfiguration() {
-        subdeploymentActions.each {action -> action.execute(subdeployments)}
+    NamedDomainObjectContainer<Subdeployment> getSubdeployments() {
+        return subdeployments
+    }
+
+    Deployment getDeployment() {
+        return deployment;
+    }
+
+    private Set<Module> getGlobalExcludes() {
+        return globalExcludes
+    }
+
+    private void applySubdeploymentConfiguration() {
+        subdeploymentActions.each { action -> action.execute(getSubdeployments()) }
+    }
+
+    private void applyGlobalExcludes() {
+        this.getGlobalExcludes().each { module ->
+            getDeployment().exclude(module)
+            getSubdeployments().each { subdeployment -> subdeployment.exclude(module) }
+        }
+
     }
 }

@@ -20,51 +20,39 @@ import com.github.mamohr.gradle.deploymentstructure.model.JBossDeploymentStructu
 import com.github.mamohr.gradle.deploymentstructure.model.Subdeployment
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.plugins.JavaPlugin
+import org.gradle.api.plugins.WarPlugin
 import org.gradle.api.tasks.StopExecutionException
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.bundling.War
-import org.gradle.internal.reflect.Instantiator
 import org.gradle.plugins.ear.Ear
 import org.gradle.plugins.ear.EarPlugin
 
-import javax.inject.Inject
-
 class JBossDeploymentStructurePlugin implements Plugin<Project> {
 
-    private JBossDeploymentStructure jBossDeploymentStructureExtension;
-    private Subdeployment subdeployment;
-    private Instantiator instantiator
-
-    @Inject
-    JBossDeploymentStructurePlugin(Instantiator instantiator) {
-        this.instantiator = instantiator
+    JBossDeploymentStructurePlugin() {
     }
 
     void apply(Project target) {
-        if(target.plugins.hasPlugin(EarPlugin)) {
-            target.container(Subdeployment)
-            jBossDeploymentStructureExtension = target.extensions.create(JBossDeploymentStructure.EXTENSION_NAME, JBossDeploymentStructure, target.container(Subdeployment))
-            target.tasks.withType(Ear) { earTask ->
-                def deploymentStructureTask = target.tasks.create(CreateJBossDeploymentStructureTask.TASK_NAME, CreateJBossDeploymentStructureTask);
-                deploymentStructureTask.earTask = earTask
-                earTask.getMetaInf().from(deploymentStructureTask.outputs)
-                earTask.eachFile {f->logger.info(f.getPath())}
-            }
-        } else {
-            subdeployment = target.extensions.create(Subdeployment.EXTENSION_NAME, Subdeployment)
+        target.plugins.withType(EarPlugin) {
+            target.extensions.create(JBossDeploymentStructure.EXTENSION_NAME, JBossDeploymentStructure, target.container(Subdeployment))
+            def createTask = target.tasks.create(CreateJBossDeploymentStructureTask.TASK_NAME, CreateJBossDeploymentStructureTask)
+            createTask.wireTo((Ear) target.tasks.findByName(EarPlugin.EAR_TASK_NAME))
+        }
+        if (!target.plugins.hasPlugin(EarPlugin)) {
+            Subdeployment subdeployment = target.extensions.create(Subdeployment.EXTENSION_NAME, Subdeployment)
             target.afterEvaluate {
                 if (!subdeployment.name) {
-                    Jar task = (War) target.tasks.findByName('war')
+                    Jar task = (War) target.tasks.findByName(WarPlugin.WAR_TASK_NAME)
                     if (!task) {
-                        task = (Jar) target.tasks.findByName('jar')
+                        task = (Jar) target.tasks.findByName(JavaPlugin.JAR_TASK_NAME)
                     }
-                    if(!task) {
+                    if (!task) {
                         throw new StopExecutionException("No name for jboss subdeployment set and no war or jar task available")
                     }
                     subdeployment.setName(task.getArchiveName())
                 }
             }
         }
-
     }
 }

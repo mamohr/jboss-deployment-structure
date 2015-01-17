@@ -16,9 +16,7 @@
 
 package com.github.mamohr.gradle.deploymentstructure.model
 
-import org.gradle.api.Action
 import org.gradle.util.ConfigureUtil
-
 
 /**
  * This class represents a deployment in the jboss-deployment-structure.xml
@@ -48,8 +46,8 @@ class Deployment {
         excludeModules.add(excludedModule)
     }
 
-    def Set<Module> getExcludeModules() {
-        return excludeModules
+    void exclude(Module module) {
+        excludeModules.add(module)
     }
 
     def saveToXml(Node node) {

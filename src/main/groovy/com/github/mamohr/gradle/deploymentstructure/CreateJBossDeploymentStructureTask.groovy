@@ -27,53 +27,59 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.plugins.ear.Ear
 import org.gradle.plugins.ear.EarPlugin
 
-import javax.inject.Inject
-
 /**
  * Created by mario on 10.01.2015.
  */
 class CreateJBossDeploymentStructureTask extends DefaultTask {
 
     public static final String TASK_NAME = "createJBossDeploymentStructure"
+    public static final String OUTPUT_FILENAME = "jboss-deployment-structure.xml"
 
-    private File deploymentStructureFile
+    private File outputFile;
 
-    Ear earTask
+    public void wireTo(Ear earTask) {
+        earTask.getMetaInf().from(this.outputs)
+    }
 
     @InputFiles
-    def getDeployConfiguration() {
-        project.configurations.getByName(EarPlugin.DEPLOY_CONFIGURATION_NAME).files
+    Set<File> getDeployConfigurationFiles() {
+        getDeployConfiguration().files
+    }
+
+    @OutputFile
+    File getOutputFile() {
+        if (outputFile == null) {
+            outputFile = new File(project.getBuildDir(), "/$name/" + OUTPUT_FILENAME)
+        }
+        return outputFile
+    }
+
+    private Configuration getDeployConfiguration() {
+        return project.configurations.getByName(EarPlugin.DEPLOY_CONFIGURATION_NAME)
     }
 
     @TaskAction
     void writeFile() {
-        def deployConfiguration = project.configurations.getByName(EarPlugin.DEPLOY_CONFIGURATION_NAME)
-        def deploymentDependencies = deployConfiguration.getDependencies()
         JBossDeploymentStructure jbossDeploymentStructure = project.getExtensions().getByType(JBossDeploymentStructure)
-        def subdeployments = deploymentDependencies.withType(ProjectDependency).findAll { p -> p.dependencyProject.extensions.findByType(Subdeployment) != null }.collect { p -> p.dependencyProject.extensions.findByType(Subdeployment) }
-        subdeployments.each{subdeployment->jbossDeploymentStructure.getSubdeployments().add(subdeployment)}
 
-        deployConfiguration.getResolvedConfiguration().resolvedArtifacts.each {artifact ->
-            def subdeployment = new Subdeployment(artifact.file.getName())
-            jbossDeploymentStructure.getSubdeployments().add(subdeployment)
-        }
-
-        jbossDeploymentStructure.applySubdeploymentConfiguration();
-
-        jbossDeploymentStructure.getGlobalExcludes().each { exclude ->
-            jbossDeploymentStructure.deployment.getExcludeModules().add(exclude)
-            jbossDeploymentStructure.getSubdeployments().each {subdeployment -> subdeployment.getExcludeModules().add(exclude)}
-        }
+        jbossDeploymentStructure.addSubdeployments(getSubdeploymentsConfiguredInDeployProjectDependencies())
+        jbossDeploymentStructure.addSubdeployments(createSubdeploymentsFromDeployArtifacts())
 
         Node root = jbossDeploymentStructure.saveToXml(null)
-        getDeploymentStructureFile().withPrintWriter {writer -> new XmlNodePrinter(writer).print(root)}
+        getOutputFile().withPrintWriter { writer -> new XmlNodePrinter(writer).print(root) }
     }
 
-    @OutputFile
-    File getDeploymentStructureFile() {
-        if(deploymentStructureFile == null) {
-            deploymentStructureFile = new File(project.getBuildDir(),"/$name/jboss-deployment-structure.xml")
-        }
-        return deploymentStructureFile
+    private List<Subdeployment> createSubdeploymentsFromDeployArtifacts() {
+        return getDeployConfiguration().getResolvedConfiguration().resolvedArtifacts
+                .collect { artifact -> new Subdeployment(artifact.file.getName()) }
     }
+
+    private List<Subdeployment> getSubdeploymentsConfiguredInDeployProjectDependencies() {
+        def deploymentDependencies = getDeployConfiguration().getDependencies()
+        return deploymentDependencies.withType(ProjectDependency)
+                .collect { p -> p.dependencyProject.extensions.findByType(Subdeployment) }
+                .findAll { p -> p != null }
+    }
+
+
 }
