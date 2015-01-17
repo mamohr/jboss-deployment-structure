@@ -70,4 +70,26 @@ class DependencyModuleTest extends Specification {
         nodeIsSimilarToString(xml, expectedXml)
     }
 
+    def 'meta-inf attribute is created'() {
+        String expectedXml =
+                '<module name="my-dependency" slot="main" meta-inf="import"/>'.stripIndent()
+        when:
+        dependencyModule.metaInf = DependencyModule.DispositionType.IMPORT;
+        Node xml = dependencyModule.saveToXml(null);
+        then:
+        nodeIsSimilarToString(xml, expectedXml)
+
+    }
+
+    def 'services attribute is created'() {
+        String expectedXml =
+                '<module name="my-dependency" slot="main" services="export"/>'.stripIndent()
+        when:
+        dependencyModule.services = DependencyModule.DispositionType.EXPORT;
+        Node xml = dependencyModule.saveToXml(null);
+        then:
+        nodeIsSimilarToString(xml, expectedXml)
+
+    }
+
 }

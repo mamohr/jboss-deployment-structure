@@ -21,7 +21,7 @@ package com.github.mamohr.gradle.deploymentstructure.model
  */
 class DependencyModule extends Module {
 
-    public static enum MetaInfDispositionType {
+    public static enum DispositionType {
         NONE,
         IMPORT,
         EXPORT
@@ -30,7 +30,8 @@ class DependencyModule extends Module {
     boolean export
     boolean optional
     boolean annotations
-    MetaInfDispositionType metaInf
+    DispositionType services
+    DispositionType metaInf
 
     DependencyModule(String name) {
         super(name)
@@ -47,6 +48,12 @@ class DependencyModule extends Module {
         }
         if (annotations) {
             module.attributes().annotations = annotations
+        }
+        if (services) {
+            module.attributes().services = services.name().toLowerCase()
+        }
+        if (metaInf) {
+            module.attributes().'meta-inf' = metaInf.name().toLowerCase()
         }
         return module
     }
