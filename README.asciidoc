@@ -10,7 +10,7 @@ To use the plugin, configure your `build.gradle` script and add the plugin:
 ----
 buildscript {
     repositories {
-        maven(url 'http://dl.bintray.com/mamohr/maven/')
+        jcenter()
     }
     dependencies {
         classpath 'com.github.mamohr.gradle:jboss-deployment-structure:0.8.0'
