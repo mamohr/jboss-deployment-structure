@@ -29,7 +29,7 @@ class JBossDeploymentStructure implements XmlSerializable {
     private List<Action<NamedDomainObjectContainer<Subdeployment>>> subdeploymentActions = new ArrayList<>();
     private List<Action<? super Node>> xmlActions = []
 
-    boolean earSubdeploymentsIsolated = true
+    Boolean earSubdeploymentsIsolated
     String structureVersion = '1.2'
 
 
@@ -74,7 +74,7 @@ class JBossDeploymentStructure implements XmlSerializable {
         }
         applyGlobalExcludes();
         applySubdeploymentConfiguration()
-        if (!earSubdeploymentsIsolated) {
+        if (earSubdeploymentsIsolated != null) {
             root.appendNode("ear-subdeployments-isolated", earSubdeploymentsIsolated)
         }
         deployment.saveToXml(root);

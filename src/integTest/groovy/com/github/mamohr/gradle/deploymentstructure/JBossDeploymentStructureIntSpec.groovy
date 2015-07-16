@@ -248,6 +248,26 @@ class JBossDeploymentStructureIntSpec extends IntegrationSpec {
         result.failure == null
     }
 
+    def 'ear subdeployment isolated is respected'() {
+        buildFile << '''
+            apply plugin: 'com.github.mamohr.jboss-deployment-structure'
+            apply plugin: 'ear'
+
+            jbossDeploymentStructure {
+                earSubdeploymentsIsolated = true
+            }
+        '''
+        when:
+        ExecutionResult result = runTasks(CreateJBossDeploymentStructureTask.TASK_NAME)
+
+        then:
+        result.failure == null
+        fileIsValidForSchema(file('build/createJBossDeploymentStructure/jboss-deployment-structure.xml'))
+        def node = parser.parse(file('build/createJBossDeploymentStructure/jboss-deployment-structure.xml'))
+        def isolated = node.'ear-subdeployments-isolated'
+        isolated.text().trim() == 'true'
+    }
+
     boolean fileIsValidForSchema(File file) {
         def factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI)
 
