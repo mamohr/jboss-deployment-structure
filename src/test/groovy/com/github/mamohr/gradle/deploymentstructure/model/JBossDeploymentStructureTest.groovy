@@ -47,7 +47,6 @@ class JBossDeploymentStructureTest extends Specification {
                 '''<jboss-deployment-structure xmlns="urn:jboss:deployment-structure:1.2">
               <deployment>
                 <dependencies/>
-                <exclusions/>
               </deployment>
             </jboss-deployment-structure>'''.stripIndent()
         when:
@@ -63,7 +62,6 @@ class JBossDeploymentStructureTest extends Specification {
                 <dependencies>
                     <module name="my-dependency" slot="1.1" export="true"/>
                 </dependencies>
-                <exclusions/>
               </deployment>
             </jboss-deployment-structure>'''.stripIndent()
         when:
@@ -80,11 +78,9 @@ class JBossDeploymentStructureTest extends Specification {
             <jboss-deployment-structure xmlns="urn:jboss:deployment-structure:1.2">
               <deployment>
                 <dependencies/>
-                <exclusions/>
               </deployment>
               <sub-deployment name="my-ejb.jar">
                 <dependencies/>
-                <exclusions/>
               </sub-deployment>
             </jboss-deployment-structure>'''.stripIndent()
         when:
@@ -100,7 +96,6 @@ class JBossDeploymentStructureTest extends Specification {
                 <ear-subdeployments-isolated>false</ear-subdeployments-isolated>
                 <deployment>
                     <dependencies/>
-                    <exclusions/>
                 </deployment>
             </jboss-deployment-structure>'''.stripIndent()
         when:
