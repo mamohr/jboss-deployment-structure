@@ -24,6 +24,7 @@ import org.gradle.util.ConfigureUtil
 class Deployment {
     private Set<DependencyModule> dependencyModules = []
     private Set<Module> excludeModules = [] as Set
+    private Set<SubSystem> subSystemExcludes = []
 
     /**
      * Adds a dependency module to the deployment.
@@ -50,14 +51,35 @@ class Deployment {
         excludeModules.add(module)
     }
 
+    /***
+     * subsystem exclusion
+     * @param subSIdentifier
+     */
+    void excludeSubSystem(String subSIdentifier) {
+        SubSystem excludedSubSystem = new SubSystem(subSIdentifier)
+        subSystemExcludes.add(excludedSubSystem)
+    }
+
+    void excludeSubSystem(SubSystem subS) {
+        subSystemExcludes.add(subS)
+    }
+
     def saveToXml(Node node) {
         Node deployment = new Node(node, getXmlNodeName())
         Node dependencies = new Node(deployment, "dependencies")
         dependencyModules.each { module ->
             module.saveToXml(dependencies);
         }
-        Node exclusions = new Node(deployment, "exclusions")
-        excludeModules.each { ex -> ex.saveToXml(exclusions) }
+
+        if (excludeModules.size() > 0) {
+            Node exclusions = new Node(deployment, "exclusions")
+            excludeModules.each { ex -> ex.saveToXml(exclusions) }
+        }
+
+        if (subSystemExcludes.size() > 0) {
+            Node excludeSubsystem = new Node(deployment, "exclude-subsystems")
+            subSystemExcludes.each { ex -> ex.saveToXml(excludeSubsystem) }
+        }
         return deployment
     }
 
