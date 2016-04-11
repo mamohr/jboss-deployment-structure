@@ -54,6 +54,10 @@ class JBossDeploymentStructure implements XmlSerializable {
         deployment.exclude(moduleIdentifier)
     }
 
+    void excludeSubSystem(String subSIdentifier) {
+        deployment.excludeSubSystem(subSIdentifier)
+    }
+
 
     void addSubdeployments(Collection<? extends Subdeployment> subdeployments) {
         this.subdeployments.addAll(subdeployments)

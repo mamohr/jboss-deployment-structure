@@ -27,7 +27,6 @@ import javax.xml.validation.SchemaFactory
 class JBossDeploymentStructureIntSpec extends IntegrationSpec {
     @Shared
     private XmlParser parser = new XmlParser()
-
     def 'applying the plugin creates jboss-deployment-structure.xml'() {
         buildFile << '''
             apply plugin: 'ear'
@@ -266,6 +265,28 @@ class JBossDeploymentStructureIntSpec extends IntegrationSpec {
         def node = parser.parse(file('build/createJBossDeploymentStructure/jboss-deployment-structure.xml'))
         def isolated = node.'ear-subdeployments-isolated'
         isolated.text().trim() == 'true'
+    }
+
+    def 'SubSystem exclude is inserted'() {
+        helper.addSubproject('module')
+        buildFile << '''
+            apply plugin: 'ear'
+            apply plugin: 'com.github.mamohr.jboss-deployment-structure'
+
+            jbossDeploymentStructure {
+                excludeSubSystem 'jaxrs'
+            }
+
+        '''
+        when:
+        ExecutionResult result = runTasks('ear')
+
+        then:
+        result.wasExecuted("createJBossDeploymentStructure")
+        fileIsValidForSchema(file('build/createJBossDeploymentStructure/jboss-deployment-structure.xml'))
+        def node = parser.parse(file('build/createJBossDeploymentStructure/jboss-deployment-structure.xml'))
+        node.'deployment'['exclude-subsystems'].subsystem.@name.get(0) == 'jaxrs'
+        result.failure == null
     }
 
     boolean fileIsValidForSchema(File file) {
