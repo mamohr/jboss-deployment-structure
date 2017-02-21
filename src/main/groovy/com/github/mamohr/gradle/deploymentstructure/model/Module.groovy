@@ -22,6 +22,8 @@ package com.github.mamohr.gradle.deploymentstructure.model
 class Module implements XmlSerializable {
     String name;
     String slot = 'main';
+    Set<String> excludedPaths = [];
+    Set<String> includedPaths = [];
 
     Module(String name) {
         def moduleParts = name.split(':')
@@ -31,11 +33,30 @@ class Module implements XmlSerializable {
         this.name = moduleParts[0]
     }
 
+    void exclude(String path) {
+        excludedPaths.add(path)
+    }
+
+    void include(String path) {
+        includedPaths.add(path)
+    }
+
     @Override
     Node saveToXml(Node root) {
-        Node module = new Node(null, "module", [name: name, slot: slot])
-        if (root != null)
-            root.append(module)
+        Node module = new Node(root, 'module', [name: name, slot: slot])
+
+        if(!(excludedPaths + includedPaths).empty) {
+            Node imports = new Node(module, 'imports')
+
+            excludedPaths.each {
+                new Node(imports, 'exclude', [path: it])
+            }
+
+            includedPaths.each {
+                new Node(imports, 'include', [path: it])
+            }
+        }
+
         return module;
     }
 }
