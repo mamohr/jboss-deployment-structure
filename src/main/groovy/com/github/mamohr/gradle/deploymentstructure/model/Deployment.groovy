@@ -25,6 +25,7 @@ class Deployment {
     private Set<DependencyModule> dependencyModules = []
     private Set<Module> excludeModules = [] as Set
     private Set<SubSystem> subSystemExcludes = []
+    private Set<Resource> resources = [] as Set
 
     /**
      * Adds a dependency module to the deployment.
@@ -51,6 +52,20 @@ class Deployment {
         excludeModules.add(module)
     }
 
+    /**
+     * Adds a resource to the deployment.
+     *
+     * @param path Path to the resource
+     * @param physicalSourceCode Specifies wheter resource should be looked up from physical source or not
+     */
+    void resource(String path, Boolean physicalSourceCode) {
+        resource(new Resource(path, physicalSourceCode))
+    }
+
+    void resource(Resource resource) {
+        resources.add(resource)
+    }
+
     /***
      * subsystem exclusion
      * @param subSIdentifier
@@ -66,18 +81,23 @@ class Deployment {
 
     def saveToXml(Node node) {
         Node deployment = new Node(node, getXmlNodeName())
-        Node dependencies = new Node(deployment, "dependencies")
+        Node dependencies = new Node(deployment, 'dependencies')
         dependencyModules.each { module ->
             module.saveToXml(dependencies);
         }
 
-        if (excludeModules.size() > 0) {
-            Node exclusions = new Node(deployment, "exclusions")
+        if (!excludeModules.empty) {
+            Node exclusions = new Node(deployment, 'exclusions')
             excludeModules.each { ex -> ex.saveToXml(exclusions) }
         }
 
-        if (subSystemExcludes.size() > 0) {
-            Node excludeSubsystem = new Node(deployment, "exclude-subsystems")
+        if (!resources.empty) {
+            Node resourcesNode = new Node(deployment, 'resources')
+            resources.each { res -> res.saveToXml(resourcesNode) }
+        }
+
+        if (!subSystemExcludes.empty) {
+            Node excludeSubsystem = new Node(deployment, 'exclude-subsystems')
             subSystemExcludes.each { ex -> ex.saveToXml(excludeSubsystem) }
         }
         return deployment
