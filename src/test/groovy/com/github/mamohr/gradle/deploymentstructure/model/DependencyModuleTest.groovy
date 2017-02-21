@@ -110,11 +110,11 @@ class DependencyModuleTest extends Specification {
         String expectedXml =
                 ''' <module name="my-dependency" slot="main">
                         <imports>
-                            <include path="my-dependency/api" />
+                            <include path="lib/api"/>
                         </imports>
                     </module>'''.stripIndent()
         when:
-        dependencyModule.include 'my_dependency/api'
+        dependencyModule.include 'lib/api'
         Node xml = dependencyModule.saveToXml(null)
         then:
         nodeIsSimilarToString(xml, expectedXml)
@@ -124,12 +124,12 @@ class DependencyModuleTest extends Specification {
         String expectedXml =
                 ''' <module name="my-dependency" slot="main">
                         <imports>
-                            <include path="my_dependency/api" />
+                            <include path="lib/api" />
                             <exclude path="/**" />
                         </imports>
                     </module>'''.stripIndent()
         when:
-        dependencyModule.include 'my_dependency/api'
+        dependencyModule.include 'lib/api'
         dependencyModule.exclude '/**'
         Node xml = dependencyModule.saveToXml(null)
         then:
