@@ -109,11 +109,11 @@ class JBossDeploymentStructureTest extends Specification {
         String expectedXml = '''
             <jboss-deployment-structure xmlns="urn:jboss:deployment-structure:1.2">
                 <deployment>
+                    <dependencies/>
                     <resources>
                         <resource-root path="my-library.jar"/>
                         <resource-root path="lib/ext-library.jar" use-physical-code-source="true"/>
                     </resources>
-                    <dependencies/>
                 </deployment>
             </jboss-deployment-structure>'''.stripIndent()
         when:
