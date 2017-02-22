@@ -45,11 +45,13 @@ class DependencyModule extends Module {
 
     void imports(@DelegatesTo(ConfigurablePathSet) Closure cl) {
         cl.delegate = imports
+        cl.resolveStrategy = Closure.DELEGATE_FIRST
         cl()
     }
 
     void exports(@DelegatesTo(ConfigurablePathSet) Closure cl) {
         cl.delegate = exports
+        cl.resolveStrategy = Closure.DELEGATE_FIRST
         cl()
     }
 
