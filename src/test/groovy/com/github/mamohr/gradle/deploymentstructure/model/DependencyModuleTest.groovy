@@ -94,8 +94,8 @@ class DependencyModuleTest extends Specification {
         String expectedXml =
                 '''<module name="my-dependency" slot="main">
                     <imports>
-                        <include path="my-dependency/api">
-                        <include path="my-dependency/lib">
+                        <include path="my-dependency/api" />
+                        <include path="my-dependency/lib" />
                     </imports>
                 </module>'''.stripIndent()
         when:
@@ -112,8 +112,8 @@ class DependencyModuleTest extends Specification {
         String expectedXml =
                 '''<module name="my-dependency" slot="main">
                     <imports>
-                        <exclude path="my-dependency/api">
-                        <exclude path="my-dependency/lib">
+                        <exclude path="my-dependency/api" />
+                        <exclude path="my-dependency/lib" />
                     </imports>
                 </module>'''.stripIndent()
         when:
@@ -130,8 +130,8 @@ class DependencyModuleTest extends Specification {
         String expectedXml =
                 '''<module name="my-dependency" slot="main">
                     <exports>
-                        <include path="my-dependency/api">
-                        <include path="my-dependency/lib">
+                        <include path="my-dependency/api" />
+                        <include path="my-dependency/lib" />
                     </exports>
                 </module>'''.stripIndent()
         when:
@@ -148,8 +148,8 @@ class DependencyModuleTest extends Specification {
         String expectedXml =
                 '''<module name="my-dependency" slot="main">
                     <exports>
-                        <exclude path="my-dependency/api">
-                        <exclude path="my-dependency/lib">
+                        <exclude path="my-dependency/api" />
+                        <exclude path="my-dependency/lib" />
                     </exports>
                 </module>'''.stripIndent()
         when:
