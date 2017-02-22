@@ -73,23 +73,27 @@ class DependencyModule extends Module {
         }
         if(!imports.empty) {
             Node importsTag = new Node(module, 'imports')
-            imports.includedPaths.each { String path ->
-                new Node(importsTag, 'include', [path: path])
-            }
-            imports.excludedPaths.each { String path ->
-                new Node(importsTag, 'exclude', [path: path])
-            }
+            appendPathSetToNode(importsTag, imports)
         }
         if(!exports.empty) {
             Node exportsTag = new Node(module, 'exports')
-            exports.includedPaths.each { String path ->
-                new Node(exportsTag, 'include', [path: path])
-            }
-            exports.excludedPaths.each { String path ->
-                new Node(exportsTag, 'exclude', [path: path])
-            }
+            appendPathSetToNode(exportsTag, exports)
         }
         return module
+    }
+
+    /**
+     * Appends the elements of the ConfigurablePathSet as &lt;include&gt; or &lt;exclude&gt; tag
+     * @param filterNode
+     * @param pathSet
+     */
+    protected void appendPathSetToNode(Node filterNode, ConfigurablePathSet pathSet) {
+        pathSet.includedPaths.each { String path ->
+            new Node(filterNode, 'include', [path: path])
+        }
+        pathSet.excludedPaths.each { String path ->
+            new Node(filterNode, 'exclude', [path: path])
+        }
     }
 
 }
