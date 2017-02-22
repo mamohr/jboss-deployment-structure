@@ -39,22 +39,16 @@ class DependencyModule extends Module {
 
     DependencyModule(String name) {
         super(name)
+        imports = new ConfigurablePathSet()
+        exports = new ConfigurablePathSet()
     }
 
     void imports(@DelegatesTo(ConfigurablePathSet) Closure cl) {
-        if(!imports) {
-            imports = new ConfigurablePathSet()
-        }
-
         cl.delegate = imports
         cl()
     }
 
     void exports(@DelegatesTo(ConfigurablePathSet) Closure cl) {
-        if(!exports) {
-            exports = new ConfigurablePathSet()
-        }
-
         cl.delegate = exports
         cl()
     }
@@ -77,7 +71,7 @@ class DependencyModule extends Module {
         if (metaInf) {
             module.attributes().'meta-inf' = metaInf.name().toLowerCase()
         }
-        if(imports) {
+        if(!imports.empty) {
             Node importsTag = new Node(module, 'imports')
             imports.includedPaths.each { String path ->
                 new Node(importsTag, 'include', [path: path])
@@ -86,7 +80,7 @@ class DependencyModule extends Module {
                 new Node(importsTag, 'exclude', [path: path])
             }
         }
-        if(exports) {
+        if(!exports.empty) {
             Node exportsTag = new Node(module, 'exports')
             exports.includedPaths.each { String path ->
                 new Node(exportsTag, 'include', [path: path])
