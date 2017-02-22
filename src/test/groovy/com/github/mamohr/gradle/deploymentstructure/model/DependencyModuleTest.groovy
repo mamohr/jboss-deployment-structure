@@ -92,48 +92,4 @@ class DependencyModuleTest extends Specification {
 
     }
 
-    def 'imports tag is created when path is excluded'() {
-        String expectedXml =
-                ''' <module name="my-dependency" slot="main">
-                        <imports>
-                            <exclude path="/**" />
-                        </imports>
-                    </module>'''.stripIndent()
-        when:
-        dependencyModule.exclude '/**'
-        Node xml = dependencyModule.saveToXml(null)
-        then:
-        nodeIsSimilarToString(xml, expectedXml)
-    }
-
-    def 'imports tag is created when path is included'() {
-        String expectedXml =
-                ''' <module name="my-dependency" slot="main">
-                        <imports>
-                            <include path="lib/api"/>
-                        </imports>
-                    </module>'''.stripIndent()
-        when:
-        dependencyModule.include 'lib/api'
-        Node xml = dependencyModule.saveToXml(null)
-        then:
-        nodeIsSimilarToString(xml, expectedXml)
-    }
-
-    def 'imports tag is created with multiple import and export directives'() {
-        String expectedXml =
-                ''' <module name="my-dependency" slot="main">
-                        <imports>
-                            <include path="lib/api" />
-                            <exclude path="/**" />
-                        </imports>
-                    </module>'''.stripIndent()
-        when:
-        dependencyModule.include 'lib/api'
-        dependencyModule.exclude '/**'
-        Node xml = dependencyModule.saveToXml(null)
-        then:
-        nodeIsSimilarToString(xml, expectedXml)
-    }
-
 }
