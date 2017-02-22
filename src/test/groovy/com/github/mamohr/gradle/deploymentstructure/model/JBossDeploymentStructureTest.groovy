@@ -105,23 +105,5 @@ class JBossDeploymentStructureTest extends Specification {
         nodeIsSimilarToString(xml, expectedXml)
     }
 
-    def 'resources are added'() {
-        String expectedXml = '''
-            <jboss-deployment-structure xmlns="urn:jboss:deployment-structure:1.2">
-                <deployment>
-                    <dependencies/>
-                    <resources>
-                        <resource-root path="my-library.jar"/>
-                        <resource-root path="lib/ext-library.jar" use-physical-code-source="true"/>
-                    </resources>
-                </deployment>
-            </jboss-deployment-structure>'''.stripIndent()
-        when:
-        structure.resource 'my-library.jar'
-        structure.resource path: 'lib/ext-library.jar', physicalCodeSource: true
-        Node xml = structure.saveToXml(null)
-        then:
-        nodeIsSimilarToString(xml, expectedXml)
-    }
 
 }

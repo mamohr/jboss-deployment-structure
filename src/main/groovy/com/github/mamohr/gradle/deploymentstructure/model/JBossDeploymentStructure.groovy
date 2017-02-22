@@ -58,13 +58,6 @@ class JBossDeploymentStructure implements XmlSerializable {
         deployment.excludeSubSystem(subSIdentifier)
     }
 
-    void resource(String path, Boolean physicalCodeSource = false) {
-        deployment.resource(path, physicalCodeSource)
-    }
-
-    void resource(Map args) {
-        resource((String)args.get('path'), (Boolean)args.get('physicalCodeSource'))
-    }
 
     void addSubdeployments(Collection<? extends Subdeployment> subdeployments) {
         this.subdeployments.addAll(subdeployments)
