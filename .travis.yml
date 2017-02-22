@@ -1,6 +1,8 @@
 language: groovy
 
-install: ./gradlew assemble
+install:
+  - chmod +x gradlew
+  - ./gradlew assemble
 
 script: ./gradlew check
 
