@@ -78,7 +78,6 @@ class DependencyModuleTest extends Specification {
         Node xml = dependencyModule.saveToXml(null);
         then:
         nodeIsSimilarToString(xml, expectedXml)
-
     }
 
     def 'services attribute is created'() {
@@ -89,7 +88,6 @@ class DependencyModuleTest extends Specification {
         Node xml = dependencyModule.saveToXml(null);
         then:
         nodeIsSimilarToString(xml, expectedXml)
-
     }
 
 }
