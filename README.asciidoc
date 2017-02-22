@@ -29,7 +29,7 @@ jbossDeploymentStructure {
     globalExclude 'my-excluded-module:1.1' //global excludes will be added to the deployment and ALL subdeployments
     exclude 'my-other-excluded-module' // exclude will be added to the deployment
     dependency 'my-dependency:1.1' //Adds dependency 'my-dependency' with slot '1.1' to deployment
-    dependency 'my-other-dependency' { //Adds dependency with additional attributes
+    dependency ('my-other-dependency') { //Adds dependency with additional attributes
         slot = '1.1'
         export = true
         optional = true
@@ -38,13 +38,13 @@ jbossDeploymentStructure {
         metaInf = 'IMPORT' //possible values [NONE, IMPORT, EXPORT]
 
         imports { //Configure imports with exclusions or inclusions of paths
-            exclude '/lib/ext'
-            include '/ext'
+            exclude 'lib/ext'
+            include 'ext'
         }
 
         exports { //Configure exports
-            exclude '/lib/ext'
-            include '/ext'
+            exclude 'lib/ext'
+            include 'ext'
         }
     }
     subdeployments { // Configure additional subdeployments
@@ -52,7 +52,6 @@ jbossDeploymentStructure {
             dependency 'another.module'
             exclude 'excluded.module'
         }
-        ...
     }
 }
 ----

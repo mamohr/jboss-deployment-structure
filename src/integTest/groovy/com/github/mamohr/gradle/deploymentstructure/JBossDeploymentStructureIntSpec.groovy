@@ -267,6 +267,50 @@ class JBossDeploymentStructureIntSpec extends IntegrationSpec {
         isolated.text().trim() == 'true'
     }
 
+    def 'Sample in readme creates valid xml'() {
+        buildFile << '''
+        apply plugin: 'com.github.mamohr.jboss-deployment-structure'
+        apply plugin: 'ear'
+        
+        jbossDeploymentStructure {
+            structureVersion ='1.2' //JBoss deployment structure schema version
+            earSubdeploymentsIsolated = false
+            globalExclude 'my-excluded-module:1.1' //global excludes will be added to the deployment and ALL subdeployments
+            exclude 'my-other-excluded-module' // exclude will be added to the deployment
+            dependency 'my-dependency:1.1' //Adds dependency 'my-dependency' with slot '1.1' to deployment
+            dependency ('my-other-dependency') { //Adds dependency with additional attributes
+                slot = '1.1'
+                export = true
+                optional = true
+                annotations = true
+                services = 'NONE' //possible values [NONE, IMPORT, EXPORT]
+                metaInf = 'IMPORT' //possible values [NONE, IMPORT, EXPORT]
+
+                imports { //Configure imports with exclusions or inclusions of paths
+                    exclude 'lib/ext'
+                    include 'ext'
+                }
+
+                exports { //Configure exports
+                    exclude 'lib/ext'
+                    include 'ext'
+                }
+            }
+            subdeployments { // Configure additional subdeployments
+                'my-war.war' {
+                    dependency 'another.module'
+                    exclude 'excluded.module'
+                }
+            }
+        }'''
+        when:
+        ExecutionResult result = runTasks(CreateJBossDeploymentStructureTask.TASK_NAME)
+
+        then:
+        result.failure == null
+        fileIsValidForSchema(file('build/createJBossDeploymentStructure/jboss-deployment-structure.xml'))
+    }
+
     def 'SubSystem exclude is inserted'() {
         helper.addSubproject('module')
         buildFile << '''
