@@ -90,4 +90,76 @@ class DependencyModuleTest extends Specification {
         nodeIsSimilarToString(xml, expectedXml)
     }
 
+    def 'imports tag is created for included paths'() {
+        String expectedXml =
+                '''<module name="my-dependency" slot="main">
+                    <imports>
+                        <include path="my-dependency/api">
+                        <include path="my-dependency/lib">
+                    </imports>
+                </module>'''
+        when:
+        dependencyModule.imports {
+            include 'my-dependency/api'
+            include 'my-dependency/lib'
+        }
+        Node xml = dependencyModule.saveToXml(null)
+        then:
+        nodeIsSimilarToString(xml, expectedXml)
+    }
+
+    def 'imports tag is created for excluded paths'() {
+        String expectedXml =
+                '''<module name="my-dependency" slot="main">
+                    <imports>
+                        <exclude path="my-dependency/api">
+                        <exclude path="my-dependency/lib">
+                    </imports>
+                </module>'''
+        when:
+        dependencyModule.imports {
+            exclude 'my-dependency/api'
+            exclude 'my-dependency/lib'
+        }
+        Node xml = dependencyModule.saveToXml(null)
+        then:
+        nodeIsSimilarToString(xml, expectedXml)
+    }
+
+    def 'exports tag is created for included paths'() {
+        String expectedXml =
+                '''<module name="my-dependency" slot="main">
+                    <exports>
+                        <include path="my-dependency/api">
+                        <include path="my-dependency/lib">
+                    </exports>
+                </module>'''
+        when:
+        dependencyModule.exports {
+            include 'my-dependency/api'
+            include 'my-dependency/lib'
+        }
+        Node xml = dependencyModule.saveToXml(null)
+        then:
+        nodeIsSimilarToString(xml, expectedXml)
+    }
+
+    def 'exports tag is created for excluded paths'() {
+        String expectedXml =
+                '''<module name="my-dependency" slot="main">
+                    <exports>
+                        <exclude path="my-dependency/api">
+                        <exclude path="my-dependency/lib">
+                    </exports>
+                </module>'''
+        when:
+        dependencyModule.exports {
+            exclude 'my-dependency/api'
+            exclude 'my-dependency/lib'
+        }
+        Node xml = dependencyModule.saveToXml(null)
+        then:
+        nodeIsSimilarToString(xml, expectedXml)
+    }
+
 }
