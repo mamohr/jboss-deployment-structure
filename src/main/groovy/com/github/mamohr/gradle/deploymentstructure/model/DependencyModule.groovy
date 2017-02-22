@@ -50,6 +50,15 @@ class DependencyModule extends Module {
         cl()
     }
 
+    void exports(@DelegatesTo(ConfigurablePathSet) Closure cl) {
+        if(!exports) {
+            exports = new ConfigurablePathSet()
+        }
+
+        cl.delegate = exports
+        cl()
+    }
+
     @Override
     Node saveToXml(Node node) {
         Node module = super.saveToXml(node)
@@ -75,6 +84,15 @@ class DependencyModule extends Module {
             }
             imports.excludedPaths.each { String path ->
                 new Node(importsTag, 'exclude', [path: path])
+            }
+        }
+        if(exports) {
+            Node exportsTag = new Node(module, 'exports')
+            exports.includedPaths.each { String path ->
+                new Node(exportsTag, 'include', [path: path])
+            }
+            exports.excludedPaths.each { String path ->
+                new Node(exportsTag, 'exclude', [path: path])
             }
         }
         return module
