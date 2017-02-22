@@ -41,7 +41,7 @@ class DependencyModule extends Module {
         super(name)
     }
 
-    void imports(Closure cl) {
+    void imports(@DelegatesTo(ConfigurablePathSet) Closure cl) {
         if(!imports) {
             imports = new ConfigurablePathSet()
         }
