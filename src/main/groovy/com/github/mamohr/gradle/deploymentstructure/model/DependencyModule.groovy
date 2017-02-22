@@ -30,11 +30,24 @@ class DependencyModule extends Module {
     boolean export
     boolean optional
     boolean annotations
+
+    ConfigurablePathSet imports
+    ConfigurablePathSet exports
+
     DispositionType services
     DispositionType metaInf
 
     DependencyModule(String name) {
         super(name)
+    }
+
+    void imports(Closure cl) {
+        if(!imports) {
+            imports = new ConfigurablePathSet()
+        }
+
+        cl.delegate = imports
+        cl()
     }
 
     @Override
@@ -54,6 +67,12 @@ class DependencyModule extends Module {
         }
         if (metaInf) {
             module.attributes().'meta-inf' = metaInf.name().toLowerCase()
+        }
+        if(imports) {
+            Node importsTag = new Node(module, 'imports')
+            imports.includedPaths.each { String path ->
+                new Node(importsTag, 'include', [path: path])
+            }
         }
         return module
     }
