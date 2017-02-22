@@ -97,7 +97,7 @@ class DependencyModuleTest extends Specification {
                         <include path="my-dependency/api">
                         <include path="my-dependency/lib">
                     </imports>
-                </module>'''
+                </module>'''.stripIndent()
         when:
         dependencyModule.imports {
             include 'my-dependency/api'
@@ -115,7 +115,7 @@ class DependencyModuleTest extends Specification {
                         <exclude path="my-dependency/api">
                         <exclude path="my-dependency/lib">
                     </imports>
-                </module>'''
+                </module>'''.stripIndent()
         when:
         dependencyModule.imports {
             exclude 'my-dependency/api'
@@ -133,7 +133,7 @@ class DependencyModuleTest extends Specification {
                         <include path="my-dependency/api">
                         <include path="my-dependency/lib">
                     </exports>
-                </module>'''
+                </module>'''.stripIndent()
         when:
         dependencyModule.exports {
             include 'my-dependency/api'
@@ -151,7 +151,7 @@ class DependencyModuleTest extends Specification {
                         <exclude path="my-dependency/api">
                         <exclude path="my-dependency/lib">
                     </exports>
-                </module>'''
+                </module>'''.stripIndent()
         when:
         dependencyModule.exports {
             exclude 'my-dependency/api'
