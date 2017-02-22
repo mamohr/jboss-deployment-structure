@@ -29,6 +29,15 @@ dependencies {
     testCompile 'com.netflix.nebula:nebula-test:2.0.+'
 }
 
+ext {
+    if (!project.hasProperty("bintrayUser")) {
+        bintrayUser = ""
+    }
+    if (!project.hasProperty("bintrayKey")) {
+        bintrayKey = ""
+    }
+}
+
 configurations.all {
     resolutionStrategy {
         exclude group: 'org.codehaus.groovy', module: 'groovy'
