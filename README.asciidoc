@@ -36,6 +36,16 @@ jbossDeploymentStructure {
         annotations = true
         services = 'NONE' //possible values [NONE, IMPORT, EXPORT]
         metaInf = 'IMPORT' //possible values [NONE, IMPORT, EXPORT]
+
+        imports { //Configure imports with exclusions or inclusions of paths
+            exclude '/lib/ext'
+            include '/ext'
+        }
+
+        exports { //Configure exports
+            exclude '/lib/ext'
+            include '/ext'
+        }
     }
     subdeployments { // Configure additional subdeployments
         'my-war.war' {
