@@ -82,4 +82,4 @@ For more examples have a look at the integration tests.
 === Contributors
 
 - Mario Mohr
-- Carsten Schmitt
+- Carsten Schmidt
