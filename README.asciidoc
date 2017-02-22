@@ -46,7 +46,11 @@ jbossDeploymentStructure {
             exclude 'lib/ext'
             include 'ext'
         }
-    }
+    } 
+            
+    resource 'my-library.jar'
+    resource path: 'lib/ext-library.jar', physicalCodeSource: true
+    
     subdeployments { // Configure additional subdeployments
         'my-war.war' {
             dependency 'another.module'
@@ -74,3 +78,8 @@ jbossSubdeployment {
 All dependencies in the deploy configuration of the ear will be automatically added to the jboss-deployment-structure.xml with the configured global excludes.
 
 For more examples have a look at the integration tests.
+
+=== Contributors
+
+- Mario Mohr
+- Carsten Schmitt

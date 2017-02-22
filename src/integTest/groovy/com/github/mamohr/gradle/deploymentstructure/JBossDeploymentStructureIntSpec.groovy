@@ -296,6 +296,9 @@ class JBossDeploymentStructureIntSpec extends IntegrationSpec {
                     include 'ext'
                 }
             }
+            resource 'my-library.jar\'
+            resource path: 'lib/ext-library.jar', physicalCodeSource: true
+            
             subdeployments { // Configure additional subdeployments
                 'my-war.war' {
                     dependency 'another.module'
