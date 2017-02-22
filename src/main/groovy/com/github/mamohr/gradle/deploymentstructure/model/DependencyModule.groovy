@@ -73,6 +73,9 @@ class DependencyModule extends Module {
             imports.includedPaths.each { String path ->
                 new Node(importsTag, 'include', [path: path])
             }
+            imports.excludedPaths.each { String path ->
+                new Node(importsTag, 'exclude', [path: path])
+            }
         }
         return module
     }

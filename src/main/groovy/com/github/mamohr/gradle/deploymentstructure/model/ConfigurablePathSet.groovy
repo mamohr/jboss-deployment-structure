@@ -6,13 +6,18 @@ package com.github.mamohr.gradle.deploymentstructure.model;
 class ConfigurablePathSet {
 
     Set<String> includedPaths = []
+    Set<String> excludedPaths = []
 
     void include(String path) {
         includedPaths.add(path)
     }
 
+    void exclude(String path) {
+        excludedPaths.add(path)
+    }
+
     boolean isEmpty() {
-        includedPaths.empty
+        includedPaths.empty && excludedPaths.empty
     }
 
 }
