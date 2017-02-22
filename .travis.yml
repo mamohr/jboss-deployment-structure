@@ -1,0 +1,9 @@
+language: groovy
+
+install: ./gradlew assemble
+
+script: ./gradlew check
+
+jdk:
+  - oraclejdk8
+  - oraclejdk7
