@@ -1,4 +1,4 @@
-== Gradle Plugin: jboss-deployment-structure image:https://travis-ci.org/jazzschmidt/jboss-deployment-structure.svg["Build Status", link="https://travis-ci.org/jazzschmidt/jboss-deployment-structure"]
+== Gradle Plugin: jboss-deployment-structure image:https://travis-ci.org/jazzschmidt/jboss-deployment-structure.svg["Build Status", link="https://travis-ci.org/mamohr/jboss-deployment-structure"]
 
 This gradle plugin helps to generate a jboss-deployment-structure.xml based on the deploy configuration of the ear plugin.
 
