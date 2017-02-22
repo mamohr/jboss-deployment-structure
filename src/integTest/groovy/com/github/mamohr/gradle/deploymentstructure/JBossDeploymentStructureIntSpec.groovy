@@ -314,6 +314,36 @@ class JBossDeploymentStructureIntSpec extends IntegrationSpec {
         fileIsValidForSchema(file('build/createJBossDeploymentStructure/jboss-deployment-structure.xml'))
     }
 
+    def 'Global excludes are added to subdeployments defined in jbossDeploymentStructure'() {
+        buildFile << '''
+        apply plugin: 'com.github.mamohr.jboss-deployment-structure'
+        apply plugin: 'ear'
+        
+        jbossDeploymentStructure {
+            structureVersion ='1.2' //JBoss deployment structure schema version
+            earSubdeploymentsIsolated = false
+            globalExclude 'my-excluded-module:1.1' //global excludes will be added to the deployment and ALL subdeployments
+            exclude 'my-other-excluded-module' // exclude will be added to the deployment          
+            subdeployments { // Configure additional subdeployments
+                'my-war.war' {
+                    exclude 'excluded.module'
+                }
+            }
+        }'''
+        when:
+        ExecutionResult result = runTasks(CreateJBossDeploymentStructureTask.TASK_NAME)
+
+        then:
+        result.failure == null
+        fileIsValidForSchema(file('build/createJBossDeploymentStructure/jboss-deployment-structure.xml'))
+        def node = parser.parse(file('build/createJBossDeploymentStructure/jboss-deployment-structure.xml'))
+        def deploymentExclusions = node.'deployment'.exclusions.module
+        deploymentExclusions.size() == 2
+        def subdeploymentExclusions = node.'sub-deployment'.exclusions.module
+        subdeploymentExclusions.size() == 2
+    }
+
+
     def 'SubSystem exclude is inserted'() {
         helper.addSubproject('module')
         buildFile << '''

@@ -83,8 +83,8 @@ class JBossDeploymentStructure implements XmlSerializable {
         if (!root) {
             root = new Node(null, "jboss-deployment-structure", [xmlns: "urn:jboss:deployment-structure:$structureVersion"])
         }
-        applyGlobalExcludes();
         applySubdeploymentConfiguration()
+        applyGlobalExcludes();
         if (earSubdeploymentsIsolated != null) {
             root.appendNode("ear-subdeployments-isolated", earSubdeploymentsIsolated)
         }
