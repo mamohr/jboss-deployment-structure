@@ -5,8 +5,8 @@ package com.github.mamohr.gradle.deploymentstructure.model;
  */
 class ConfigurablePathSet {
 
-    Set<String> includedPaths = []
-    Set<String> excludedPaths = []
+    LinkedHashSet<String> includedPaths = []
+    LinkedHashSet<String> excludedPaths = []
 
     void include(String path) {
         includedPaths.add(path)
