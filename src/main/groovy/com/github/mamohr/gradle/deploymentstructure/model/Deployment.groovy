@@ -58,7 +58,7 @@ class Deployment {
      * @param path Path to the resource
      * @param physicalSourceCode Specifies wheter resource should be looked up from physical source or not
      */
-    void resource(String path, Boolean physicalSourceCode) {
+    void resource(String path, Boolean physicalSourceCode = false) {
         resource(new Resource(path, physicalSourceCode))
     }
 

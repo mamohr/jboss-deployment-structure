@@ -303,12 +303,17 @@ class JBossDeploymentStructureIntSpec extends IntegrationSpec {
                 'my-war.war' {
                     dependency 'another.module'
                     exclude 'excluded.module'
+                    
+                    resource 'my-war.war'
+                    resourceFilter { //Configure resource filter
+                        include 'lib/api'
+                        exclude 'lib/util'
+                    }
                 }
             }
         }'''
         when:
         ExecutionResult result = runTasks(CreateJBossDeploymentStructureTask.TASK_NAME)
-        file('carsten.txt').text = file('build/createJBossDeploymentStructure/jboss-deployment-structure.xml').text
         then:
         result.failure == null
         fileIsValidForSchema(file('build/createJBossDeploymentStructure/jboss-deployment-structure.xml'))

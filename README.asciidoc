@@ -50,11 +50,17 @@ jbossDeploymentStructure {
             
     resource 'my-library.jar'
     resource path: 'lib/ext-library.jar', physicalCodeSource: true
-    
+
     subdeployments { // Configure additional subdeployments
         'my-war.war' {
             dependency 'another.module'
             exclude 'excluded.module'
+
+            resource 'my-war.war'
+            resourceFilter { //Configure resource filter
+                include 'lib/api'
+                exclude 'lib/util'
+            }
         }
     }
 }

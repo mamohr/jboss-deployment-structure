@@ -17,6 +17,7 @@
 package com.github.mamohr.gradle.deploymentstructure.model
 
 import org.custommonkey.xmlunit.XMLUnit
+import org.gradle.api.InvalidUserDataException
 import org.gradle.api.internal.AbstractNamedDomainObjectContainer
 import org.gradle.internal.reflect.DirectInstantiator
 import spock.lang.Specification
@@ -122,6 +123,48 @@ class JBossDeploymentStructureTest extends Specification {
         Node xml = structure.saveToXml(null)
         then:
         nodeIsSimilarToString(xml, expectedXml)
+    }
+
+    def 'resource filter is added to subdeployment'() {
+        Subdeployment subdeployment = new Subdeployment('my-war.war')
+        String expectedXml = '''
+            <jboss-deployment-structure xmlns="urn:jboss:deployment-structure:1.2">
+                <deployment>
+                    <dependencies />
+                </deployment>
+                <sub-deployment name="my-war.war">
+                    <dependencies />
+                    <resources>
+                        <resource-root path="ext-library.jar"/>
+                        <filter>
+                            <include path="api/123"/>
+                            <exclude path="lib/456"/>
+                        </filter>
+                    </resources>
+                </sub-deployment>
+            </jboss-deployment-structure>'''.stripIndent()
+        when:
+        subdeployment.resource 'ext-library.jar'
+        subdeployment.resourceFilter {
+            include 'api/123'
+            exclude 'lib/456'
+        }
+        structure.subdeployments.add(subdeployment)
+        Node xml = structure.saveToXml(null)
+        then:
+        nodeIsSimilarToString(xml, expectedXml)
+    }
+
+    def 'throws exception when no resources are present and filter is applied'() {
+        Subdeployment subdeployment = new Subdeployment('my-war.war')
+        when:
+        subdeployment.resourceFilter {
+            include 'api'
+        }
+        structure.subdeployments.add(subdeployment)
+        Node xml = structure.saveToXml(null)
+        then:
+        thrown InvalidUserDataException
     }
 
 }
