@@ -296,7 +296,7 @@ class JBossDeploymentStructureIntSpec extends IntegrationSpec {
                     include 'ext'
                 }
             }
-            resource 'my-library.jar\'
+            resource 'my-library.jar'
             resource path: 'lib/ext-library.jar', physicalCodeSource: true
             
             subdeployments { // Configure additional subdeployments
@@ -308,7 +308,7 @@ class JBossDeploymentStructureIntSpec extends IntegrationSpec {
         }'''
         when:
         ExecutionResult result = runTasks(CreateJBossDeploymentStructureTask.TASK_NAME)
-
+        file('carsten.txt').text = file('build/createJBossDeploymentStructure/jboss-deployment-structure.xml').text
         then:
         result.failure == null
         fileIsValidForSchema(file('build/createJBossDeploymentStructure/jboss-deployment-structure.xml'))
