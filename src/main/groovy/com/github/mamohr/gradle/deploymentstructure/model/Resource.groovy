@@ -16,11 +16,10 @@ class Resource implements XmlSerializable {
 
     @Override
     def saveToXml(Node root) {
-        Map attributes = [path: path]
-        Node node = new Node(root, 'resource-root', attributes)
+        Node node = new Node(root, 'resource-root', [path: path])
 
         if (physicalSourceCode) {
-            attributes.'use-physical-code-source' = true
+            node.attributes().'use-physical-code-source' = true
         }
 
         if(!pathFilter.empty) {
