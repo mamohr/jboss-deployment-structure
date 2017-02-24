@@ -1,5 +1,7 @@
 package com.github.mamohr.gradle.deploymentstructure.model
 
+import org.apache.ivy.util.XMLHelper
+import org.custommonkey.xmlunit.XMLUnit
 import spock.lang.Specification
 
 import static com.github.mamohr.gradle.deploymentstructure.XmlTestHelper.nodeIsSimilarToString;
@@ -9,10 +11,10 @@ import static com.github.mamohr.gradle.deploymentstructure.XmlTestHelper.nodeIsS
  */
 public class DeploymentTest extends Specification {
 
-    private Deployment deployment
+    private Deployment deployment = new Deployment()
 
     def setupSpec() {
-        deployment = new Deployment()
+        XMLUnit.setIgnoreWhitespace(true)
     }
 
     def 'resources are added'() {
