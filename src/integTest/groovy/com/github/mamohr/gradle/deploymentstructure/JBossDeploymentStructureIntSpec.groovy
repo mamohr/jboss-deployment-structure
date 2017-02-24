@@ -297,7 +297,10 @@ class JBossDeploymentStructureIntSpec extends IntegrationSpec {
                 }
             }
             resource 'my-library.jar'
-            resource path: 'lib/ext-library.jar', physicalCodeSource: true
+            resource(path: 'lib/ext-library.jar', physicalCodeSource: true) { //Configure resource filter
+                include 'api/query'
+                exclude 'api/info'
+            }
             
             subdeployments { // Configure additional subdeployments
                 'my-war.war' {
