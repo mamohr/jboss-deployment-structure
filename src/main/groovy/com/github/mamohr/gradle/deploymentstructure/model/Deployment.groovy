@@ -62,6 +62,10 @@ class Deployment {
         resource(new Resource(path, physicalSourceCode))
     }
 
+    void resource(Map args) {
+        resource((String) args.get('path'), (Boolean) args.get('physicalCodeSource'))
+    }
+
     void resource(Resource resource) {
         resources.add(resource)
     }
