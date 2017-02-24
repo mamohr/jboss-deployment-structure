@@ -31,16 +31,14 @@ class DependencyModule extends Module {
     boolean optional
     boolean annotations
 
-    ConfigurablePathSet imports
-    ConfigurablePathSet exports
+    final ConfigurablePathSet imports = new ConfigurablePathSet('imports')
+    final ConfigurablePathSet exports = new ConfigurablePathSet('exports')
 
     DispositionType services
     DispositionType metaInf
 
     DependencyModule(String name) {
         super(name)
-        imports = new ConfigurablePathSet()
-        exports = new ConfigurablePathSet()
     }
 
     void imports(@DelegatesTo(ConfigurablePathSet) Closure cl) {
@@ -74,28 +72,12 @@ class DependencyModule extends Module {
             module.attributes().'meta-inf' = metaInf.name().toLowerCase()
         }
         if(!imports.empty) {
-            Node importsTag = new Node(module, 'imports')
-            appendPathSetToNode(importsTag, imports)
+            imports.saveToXml(module)
         }
         if(!exports.empty) {
-            Node exportsTag = new Node(module, 'exports')
-            appendPathSetToNode(exportsTag, exports)
+            exports.saveToXml(module)
         }
         return module
-    }
-
-    /**
-     * Appends the elements of the ConfigurablePathSet as &lt;include&gt; or &lt;exclude&gt; tag
-     * @param filterNode
-     * @param pathSet
-     */
-    protected void appendPathSetToNode(Node filterNode, ConfigurablePathSet pathSet) {
-        pathSet.includedPaths.each { String path ->
-            new Node(filterNode, 'include', [path: path])
-        }
-        pathSet.excludedPaths.each { String path ->
-            new Node(filterNode, 'exclude', [path: path])
-        }
     }
 
 }

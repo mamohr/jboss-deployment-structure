@@ -7,7 +7,7 @@ class Resource implements XmlSerializable {
     String path
     Boolean physicalSourceCode
 
-    ConfigurablePathSet pathFilter = new ConfigurablePathSet()
+    ConfigurablePathSet pathFilter = new ConfigurablePathSet('filter')
 
     Resource(String path, Boolean physicalSourceCode) {
         this.path = path
@@ -23,24 +23,10 @@ class Resource implements XmlSerializable {
         }
 
         if(!pathFilter.empty) {
-            Node filter = new Node(node, 'filter')
-            appendPathSetToNode(filter, pathFilter)
+            pathFilter.saveToXml(node)
         }
 
         return node
     }
 
-    /**
-     * Appends the elements of the ConfigurablePathSet as &lt;include&gt; or &lt;exclude&gt; tag
-     * @param filterNode
-     * @param pathSet
-     */
-    protected void appendPathSetToNode(Node filterNode, ConfigurablePathSet pathSet) {
-        pathSet.includedPaths.each { String path ->
-            new Node(filterNode, 'include', [path: path])
-        }
-        pathSet.excludedPaths.each { String path ->
-            new Node(filterNode, 'exclude', [path: path])
-        }
-    }
 }
