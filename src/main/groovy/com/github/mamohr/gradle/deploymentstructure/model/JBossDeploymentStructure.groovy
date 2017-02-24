@@ -23,8 +23,9 @@ class JBossDeploymentStructure implements XmlSerializable {
 
     public static final String EXTENSION_NAME = "jbossDeploymentStructure"
 
-    private Set<Module> globalExcludes = []
+    @Delegate
     private Deployment deployment = new Deployment()
+    private Set<Module> globalExcludes = []
     private final NamedDomainObjectContainer<Subdeployment> subdeployments
     private List<Action<NamedDomainObjectContainer<Subdeployment>>> subdeploymentActions = new ArrayList<>();
     private List<Action<? super Node>> xmlActions = []
@@ -40,40 +41,6 @@ class JBossDeploymentStructure implements XmlSerializable {
     void globalExclude(String moduleIdentifier) {
         Module excludedModule = new Module(moduleIdentifier)
         globalExcludes.add(excludedModule)
-    }
-
-    void dependency(String moduleIdentifier) {
-        deployment.dependency(moduleIdentifier)
-    }
-
-    void dependency(String moduleIdentifier, Closure closure) {
-        deployment.dependency(moduleIdentifier, closure)
-    }
-
-    void exclude(String moduleIdentifier) {
-        deployment.exclude(moduleIdentifier)
-    }
-
-    void excludeSubSystem(String subSIdentifier) {
-        deployment.excludeSubSystem(subSIdentifier)
-    }
-
-    /**
-     * Adds a resource to the deployment.
-     *
-     * @param path Path to the resource
-     * @param physicalCodeSource Specifies wheter resource should be looked up from physical source or not
-     */
-    void resource(String path, Boolean physicalCodeSource, @DelegatesTo(ConfigurablePathSet) Closure cl = null) {
-        deployment.resource(path, physicalCodeSource, cl)
-    }
-
-    void  resource(String path, @DelegatesTo(ConfigurablePathSet) Closure cl = null) {
-        resource(path, false, cl)
-    }
-
-    void resource(Map args, @DelegatesTo(ConfigurablePathSet) Closure cl = null) {
-        resource((String) args.get('path'), (Boolean) args.get('physicalCodeSource'), cl)
     }
 
     void addSubdeployments(Collection<? extends Subdeployment> subdeployments) {
