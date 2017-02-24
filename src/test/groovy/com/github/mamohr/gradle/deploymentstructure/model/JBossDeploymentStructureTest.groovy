@@ -125,6 +125,29 @@ class JBossDeploymentStructureTest extends Specification {
         nodeIsSimilarToString(xml, expectedXml)
     }
 
+    def 'resources are added to subdeployment'() {
+        String expectedXml = '''
+            <jboss-deployment-structure xmlns="urn:jboss:deployment-structure:1.2">
+                <deployment>
+                    <dependencies/>
+                </deployment>
+                <sub-deployment name="my-war.war">
+                    <dependencies/>
+                    <resources>
+                        <resource-root path="my-library.jar"/>
+                        <resource-root path="lib/ext-library.jar" use-physical-code-source="true"/>
+                    </resources>
+                </sub-deployment>
+            </jboss-deployment-structure>'''.stripIndent()
+        when:
+        Subdeployment subdeployment = structure.subdeployments.create("my-war.war")
+        subdeployment.resource 'my-library.jar'
+        subdeployment.resource path: 'lib/ext-library.jar', physicalCodeSource: true
+        Node xml = structure.saveToXml(null)
+        then:
+        nodeIsSimilarToString(xml, expectedXml)
+    }
+
     def 'resources are added with filter'() {
         String expectedXml = '''
             <jboss-deployment-structure xmlns="urn:jboss:deployment-structure:1.2">
