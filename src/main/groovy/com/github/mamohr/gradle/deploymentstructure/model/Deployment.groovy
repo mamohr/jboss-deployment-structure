@@ -74,7 +74,7 @@ class Deployment {
         resources.add(resource)
 
         if(cl) {
-            cl.delegate = resource.filter
+            cl.delegate = resource.pathFilter
             cl.resolveStrategy = Closure.DELEGATE_FIRST
             cl()
         }
