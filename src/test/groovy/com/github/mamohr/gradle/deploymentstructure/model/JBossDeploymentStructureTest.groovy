@@ -131,22 +131,22 @@ class JBossDeploymentStructureTest extends Specification {
                     <dependencies/>
                     <resources>
                         <resource-root path="my-library.jar">
-                            <pathFilter>
+                            <filter>
                                 <include path="api" />
                                 <exclude path="lib" />
-                            </pathFilter>
+                            </filter>
                         </resource-root>
                         <resource-root path="lib/ext-library.jar" use-physical-code-source="true">
-                            <pathFilter>
+                            <filter>
                                 <include path="api" />
                                 <exclude path="lib" />
-                            </pathFilter>
+                            </filter>
                         </resource-root>
                     </resources>
                 </deployment>
             </jboss-deployment-structure>'''.stripIndent()
         when:
-        structure.resource 'my-library.jar' {
+        structure.resource('my-library.jar') {
             include 'api'
             exclude 'lib'
         }

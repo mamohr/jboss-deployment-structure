@@ -56,10 +56,10 @@ class Deployment {
      * Adds a resource to the deployment.
      *
      * @param path Path to the resource
-     * @param physicalSourceCode Specifies wheter resource should be looked up from physical source or not
+     * @param physicalCodeSource Specifies wheter resource should be looked up from physical source or not
      */
-    void resource(String path, Boolean physicalSourceCode, @DelegatesTo(ConfigurablePathSet) Closure cl = null) {
-        resource(new Resource(path, physicalSourceCode), cl)
+    void resource(String path, Boolean physicalCodeSource, @DelegatesTo(ConfigurablePathSet) Closure cl = null) {
+        resource(new Resource(path, physicalCodeSource), cl)
     }
 
     void resource(String path, @DelegatesTo(ConfigurablePathSet) Closure cl = null) {
