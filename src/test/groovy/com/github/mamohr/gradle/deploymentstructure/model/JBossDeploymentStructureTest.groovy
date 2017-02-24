@@ -131,16 +131,16 @@ class JBossDeploymentStructureTest extends Specification {
                     <dependencies/>
                     <resources>
                         <resource-root path="my-library.jar">
-                            <filter>
+                            <pathFilter>
                                 <include path="api" />
                                 <exclude path="lib" />
-                            </filter>
+                            </pathFilter>
                         </resource-root>
                         <resource-root path="lib/ext-library.jar" use-physical-code-source="true">
-                            <filter>
+                            <pathFilter>
                                 <include path="api" />
                                 <exclude path="lib" />
-                            </filter>
+                            </pathFilter>
                         </resource-root>
                     </resources>
                 </deployment>
