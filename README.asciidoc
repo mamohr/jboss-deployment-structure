@@ -57,10 +57,6 @@ jbossDeploymentStructure {
             exclude 'excluded.module'
 
             resource 'my-war.war'
-            resourceFilter { //Configure resource filter
-                include 'lib/api'
-                exclude 'lib/util'
-            }
         }
     }
 }

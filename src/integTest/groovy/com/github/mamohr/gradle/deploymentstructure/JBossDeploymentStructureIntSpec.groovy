@@ -305,10 +305,6 @@ class JBossDeploymentStructureIntSpec extends IntegrationSpec {
                     exclude 'excluded.module'
                     
                     resource 'my-war.war'
-                    resourceFilter { //Configure resource filter
-                        include 'lib/api'
-                        exclude 'lib/util'
-                    }
                 }
             }
         }'''
