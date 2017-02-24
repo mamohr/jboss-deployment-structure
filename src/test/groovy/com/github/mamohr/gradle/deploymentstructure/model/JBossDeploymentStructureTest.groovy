@@ -155,16 +155,4 @@ class JBossDeploymentStructureTest extends Specification {
         nodeIsSimilarToString(xml, expectedXml)
     }
 
-    def 'throws exception when no resources are present and filter is applied'() {
-        Subdeployment subdeployment = new Subdeployment('my-war.war')
-        when:
-        subdeployment.resourceFilter {
-            include 'api'
-        }
-        structure.subdeployments.add(subdeployment)
-        Node xml = structure.saveToXml(null)
-        then:
-        thrown InvalidUserDataException
-    }
-
 }
