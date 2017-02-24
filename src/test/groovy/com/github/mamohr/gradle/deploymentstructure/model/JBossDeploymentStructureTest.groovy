@@ -17,7 +17,6 @@
 package com.github.mamohr.gradle.deploymentstructure.model
 
 import org.custommonkey.xmlunit.XMLUnit
-import org.gradle.api.InvalidUserDataException
 import org.gradle.api.internal.AbstractNamedDomainObjectContainer
 import org.gradle.internal.reflect.DirectInstantiator
 import spock.lang.Specification
@@ -120,29 +119,6 @@ class JBossDeploymentStructureTest extends Specification {
         when:
         structure.resource 'my-library.jar'
         structure.resource path: 'lib/ext-library.jar', physicalCodeSource: true
-        Node xml = structure.saveToXml(null)
-        then:
-        nodeIsSimilarToString(xml, expectedXml)
-    }
-
-    def 'resources are added to subdeployment'() {
-        String expectedXml = '''
-            <jboss-deployment-structure xmlns="urn:jboss:deployment-structure:1.2">
-                <deployment>
-                    <dependencies/>
-                </deployment>
-                <sub-deployment name="my-war.war">
-                    <dependencies/>
-                    <resources>
-                        <resource-root path="my-library.jar"/>
-                        <resource-root path="lib/ext-library.jar" use-physical-code-source="true"/>
-                    </resources>
-                </sub-deployment>
-            </jboss-deployment-structure>'''.stripIndent()
-        when:
-        Subdeployment subdeployment = structure.subdeployments.create("my-war.war")
-        subdeployment.resource 'my-library.jar'
-        subdeployment.resource path: 'lib/ext-library.jar', physicalCodeSource: true
         Node xml = structure.saveToXml(null)
         then:
         nodeIsSimilarToString(xml, expectedXml)
