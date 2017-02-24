@@ -125,31 +125,36 @@ class JBossDeploymentStructureTest extends Specification {
         nodeIsSimilarToString(xml, expectedXml)
     }
 
-    def 'resource filter is added to subdeployment'() {
-        Subdeployment subdeployment = new Subdeployment('my-war.war')
+    def 'resources are added with filter'() {
         String expectedXml = '''
             <jboss-deployment-structure xmlns="urn:jboss:deployment-structure:1.2">
                 <deployment>
-                    <dependencies />
-                </deployment>
-                <sub-deployment name="my-war.war">
-                    <dependencies />
+                    <dependencies/>
                     <resources>
-                        <resource-root path="ext-library.jar"/>
-                        <filter>
-                            <include path="api/123"/>
-                            <exclude path="lib/456"/>
-                        </filter>
+                        <resource-root path="my-library.jar">
+                            <filter>
+                                <include path="api" />
+                                <exclude path="lib" />
+                            </filter>
+                        </resource-root>
+                        <resource-root path="lib/ext-library.jar" use-physical-code-source="true">
+                            <filter>
+                                <include path="api" />
+                                <exclude path="lib" />
+                            </filter>
+                        </resource-root>
                     </resources>
-                </sub-deployment>
+                </deployment>
             </jboss-deployment-structure>'''.stripIndent()
         when:
-        subdeployment.resource 'ext-library.jar'
-        subdeployment.resourceFilter {
-            include 'api/123'
-            exclude 'lib/456'
+        structure.resource 'my-library.jar' {
+            include 'api'
+            exclude 'lib'
         }
-        structure.subdeployments.add(subdeployment)
+        structure.resource(path: 'lib/ext-library.jar', physicalCodeSource: true) {
+            include 'api'
+            exclude 'lib'
+        }
         Node xml = structure.saveToXml(null)
         then:
         nodeIsSimilarToString(xml, expectedXml)
