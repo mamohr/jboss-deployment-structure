@@ -7,6 +7,8 @@ class Resource implements XmlSerializable {
     String path
     Boolean physicalSourceCode
 
+    ConfigurablePathSet filter = new ConfigurablePathSet()
+
     Resource(String path, Boolean physicalSourceCode) {
         this.path = path
         this.physicalSourceCode = physicalSourceCode

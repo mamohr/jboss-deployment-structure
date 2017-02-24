@@ -54,7 +54,7 @@ public class DeploymentTest extends Specification {
                     </resources>
                 </deployment>'''.stripIndent()
         when:
-        deployment.resource 'my-library.jar' {
+        deployment.resource('my-library.jar') {
             include 'api'
             exclude 'lib'
         }

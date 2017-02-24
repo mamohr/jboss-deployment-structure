@@ -58,16 +58,26 @@ class Deployment {
      * @param path Path to the resource
      * @param physicalSourceCode Specifies wheter resource should be looked up from physical source or not
      */
-    void resource(String path, Boolean physicalSourceCode = false) {
-        resource(new Resource(path, physicalSourceCode))
+    void resource(String path, Boolean physicalSourceCode, @DelegatesTo(ConfigurablePathSet) Closure cl = null) {
+        resource(new Resource(path, physicalSourceCode), cl)
     }
 
-    void resource(Map args) {
-        resource((String) args.get('path'), (Boolean) args.get('physicalCodeSource'))
+    void resource(String path, @DelegatesTo(ConfigurablePathSet) Closure cl = null) {
+        resource(path, false, cl)
     }
 
-    void resource(Resource resource) {
+    void resource(Map args, @DelegatesTo(ConfigurablePathSet) Closure cl = null) {
+        resource((String) args.get('path'), (Boolean) args.get('physicalCodeSource'), cl)
+    }
+
+    void resource(Resource resource, @DelegatesTo(ConfigurablePathSet) Closure cl = null) {
         resources.add(resource)
+
+        if(cl) {
+            cl.delegate = resource.filter
+            cl.resolveStrategy = Closure.DELEGATE_FIRST
+            cl()
+        }
     }
 
     /***
