@@ -7,6 +7,8 @@ class Resource implements XmlSerializable {
     String path
     Boolean physicalSourceCode
 
+    ConfigurablePathSet pathFilter = new ConfigurablePathSet('filter')
+
     Resource(String path, Boolean physicalSourceCode) {
         this.path = path
         this.physicalSourceCode = physicalSourceCode
@@ -14,12 +16,17 @@ class Resource implements XmlSerializable {
 
     @Override
     def saveToXml(Node root) {
-        Map attributes = [path: path]
+        Node node = new Node(root, 'resource-root', [path: path])
 
         if (physicalSourceCode) {
-            attributes.'use-physical-code-source' = true
+            node.attributes().'use-physical-code-source' = true
         }
 
-        return new Node(root, 'resource-root', attributes)
+        if(!pathFilter.empty) {
+            pathFilter.saveToXml(node)
+        }
+
+        return node
     }
+
 }

@@ -16,6 +16,7 @@
 
 package com.github.mamohr.gradle.deploymentstructure.model
 
+import org.gradle.api.InvalidUserDataException
 import org.gradle.api.Named
 
 /**
@@ -38,6 +39,7 @@ class Subdeployment extends Deployment implements Named, XmlSerializable {
     def saveToXml(Node node) {
         Node subdeployment = super.saveToXml(node)
         subdeployment.attributes().name = name
+
         return subdeployment
     }
 

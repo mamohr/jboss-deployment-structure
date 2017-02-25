@@ -23,8 +23,9 @@ class JBossDeploymentStructure implements XmlSerializable {
 
     public static final String EXTENSION_NAME = "jbossDeploymentStructure"
 
-    private Set<Module> globalExcludes = []
+    @Delegate
     private Deployment deployment = new Deployment()
+    private Set<Module> globalExcludes = []
     private final NamedDomainObjectContainer<Subdeployment> subdeployments
     private List<Action<NamedDomainObjectContainer<Subdeployment>>> subdeploymentActions = new ArrayList<>();
     private List<Action<? super Node>> xmlActions = []
@@ -40,30 +41,6 @@ class JBossDeploymentStructure implements XmlSerializable {
     void globalExclude(String moduleIdentifier) {
         Module excludedModule = new Module(moduleIdentifier)
         globalExcludes.add(excludedModule)
-    }
-
-    void dependency(String moduleIdentifier) {
-        deployment.dependency(moduleIdentifier)
-    }
-
-    void dependency(String moduleIdentifier, Closure closure) {
-        deployment.dependency(moduleIdentifier, closure)
-    }
-
-    void exclude(String moduleIdentifier) {
-        deployment.exclude(moduleIdentifier)
-    }
-
-    void excludeSubSystem(String subSIdentifier) {
-        deployment.excludeSubSystem(subSIdentifier)
-    }
-
-    void resource(String path, Boolean physicalCodeSource = false) {
-        deployment.resource(path, physicalCodeSource)
-    }
-
-    void resource(Map args) {
-        resource((String) args.get('path'), (Boolean) args.get('physicalCodeSource'))
     }
 
     void addSubdeployments(Collection<? extends Subdeployment> subdeployments) {

@@ -124,4 +124,39 @@ class JBossDeploymentStructureTest extends Specification {
         nodeIsSimilarToString(xml, expectedXml)
     }
 
+    def 'resources are added with filter'() {
+        String expectedXml = '''
+            <jboss-deployment-structure xmlns="urn:jboss:deployment-structure:1.2">
+                <deployment>
+                    <dependencies/>
+                    <resources>
+                        <resource-root path="my-library.jar">
+                            <filter>
+                                <include path="api" />
+                                <exclude path="lib" />
+                            </filter>
+                        </resource-root>
+                        <resource-root path="lib/ext-library.jar" use-physical-code-source="true">
+                            <filter>
+                                <include path="api" />
+                                <exclude path="lib" />
+                            </filter>
+                        </resource-root>
+                    </resources>
+                </deployment>
+            </jboss-deployment-structure>'''.stripIndent()
+        when:
+        structure.resource('my-library.jar') {
+            include 'api'
+            exclude 'lib'
+        }
+        structure.resource(path: 'lib/ext-library.jar', physicalCodeSource: true) {
+            include 'api'
+            exclude 'lib'
+        }
+        Node xml = structure.saveToXml(null)
+        then:
+        nodeIsSimilarToString(xml, expectedXml)
+    }
+
 }

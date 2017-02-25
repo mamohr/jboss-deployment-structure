@@ -296,19 +296,23 @@ class JBossDeploymentStructureIntSpec extends IntegrationSpec {
                     include 'ext'
                 }
             }
-            resource 'my-library.jar\'
-            resource path: 'lib/ext-library.jar', physicalCodeSource: true
+            resource 'my-library.jar'
+            resource(path: 'lib/ext-library.jar', physicalCodeSource: true) { //Configure resource filter
+                include 'api/query'
+                exclude 'api/info'
+            }
             
             subdeployments { // Configure additional subdeployments
                 'my-war.war' {
                     dependency 'another.module'
                     exclude 'excluded.module'
+                    
+                    resource 'my-war.war'
                 }
             }
         }'''
         when:
         ExecutionResult result = runTasks(CreateJBossDeploymentStructureTask.TASK_NAME)
-
         then:
         result.failure == null
         fileIsValidForSchema(file('build/createJBossDeploymentStructure/jboss-deployment-structure.xml'))
