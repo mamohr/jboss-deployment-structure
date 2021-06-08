@@ -1,17 +1,17 @@
 buildscript {
     repositories {
-        jcenter()
+        gradlePluginPortal()
     }
     dependencies {
-        classpath "com.netflix.nebula:nebula-project-plugin:2.0.+"
+        classpath 'com.netflix.nebula:nebula-project-plugin:5.0.+'
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.0'
     }
 }
 description='A gradle plugin that generates jboss-deployment-structure.xml based on the deploy configuration in the ear'
 group = 'com.github.mamohr.gradle'
 
-apply plugin: 'nebula-project'
-apply plugin: 'nebula-integtest'
+apply plugin: 'nebula.contacts-base'
+apply plugin: 'nebula.integtest'
 apply plugin: 'groovy'
 apply plugin: 'idea'
 apply plugin: 'com.jfrog.bintray'
@@ -26,7 +26,7 @@ dependencies {
     testCompile 'junit:junit:4.12'
     testCompile 'xmlunit:xmlunit:1.6'
 
-    testCompile 'com.netflix.nebula:nebula-test:2.0.+'
+    testCompile 'com.netflix.nebula:nebula-test:5.0.+'
 }
 
 ext {

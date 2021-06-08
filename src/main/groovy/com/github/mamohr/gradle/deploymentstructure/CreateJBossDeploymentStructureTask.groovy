@@ -21,6 +21,7 @@ import com.github.mamohr.gradle.deploymentstructure.model.Subdeployment
 import org.gradle.api.DefaultTask
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ProjectDependency
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import org.gradle.plugins.ear.Ear
@@ -44,6 +45,7 @@ class CreateJBossDeploymentStructureTask extends DefaultTask {
         outputs.upToDateWhen { false }
     }
 
+    @Internal
     Set<File> getDeployConfigurationFiles() {
         getDeployConfiguration().files
     }
