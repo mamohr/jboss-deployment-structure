@@ -1,6 +1,5 @@
 package com.github.mamohr.gradle.deploymentstructure.model
 
-import org.apache.ivy.util.XMLHelper
 import org.custommonkey.xmlunit.XMLUnit
 import spock.lang.Specification
 
